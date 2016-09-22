@@ -28,6 +28,9 @@ public class TheGameOfLife extends Application
   @Override
   public void start(Stage primaryStage)
   {
+    primaryStage.setFullScreen(true);
+    primaryStage.setTitle("The Game of Life");
+
     mainRoot.getChildren().add(word);
     TheGameOfLife theGameOfLife = new TheGameOfLife();
   }
