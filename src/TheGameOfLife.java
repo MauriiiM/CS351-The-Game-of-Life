@@ -3,22 +3,21 @@
  */
 
 import javafx.application.Application;
+import javafx.scene.Group;
 import javafx.stage.Stage;
 
 public class TheGameOfLife extends Application
 {
 
-  Cell[] x;
-  Cell[] y;
-  Cell[] z;
+  private Group mainRoot = new Group();
+  private Cell word = new Cell();
 
-  TheGameOfLife()
+  Cell[] x = new Cell[30];
+  Cell[] y = new Cell[30];
+  Cell[] z = new Cell[30];
+
+  private void createGrid()
   {
-    x = new Cell[30];
-    y = new Cell[30];
-    z = new Cell[30];
-
-
   }
 
   public static void main(String[] args)
@@ -29,6 +28,7 @@ public class TheGameOfLife extends Application
   @Override
   public void start(Stage primaryStage)
   {
-
+    mainRoot.getChildren().add(word);
+    TheGameOfLife theGameOfLife = new TheGameOfLife();
   }
 }
