@@ -1,15 +1,55 @@
-import javafx.scene.Group;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
+import java.util.Random;
+
 /**
- * Created by mmons on 9/22/2016.
+ * @author Mauricio Monsivais
  */
-public class Cell extends Group
+class Cell extends Box
 {
-  Box cell;
-  Cell()
+  final int BOX_WIDTH = 20;
+
+  private Box cell;
+  private boolean isAlive;
+  PhongMaterial color = new PhongMaterial();
+
+  Cell(boolean isAlive)
   {
-    cell = new Box();
+    this.isAlive = isAlive;
+    if (isAlive)
+    {
+      this.setWidth(BOX_WIDTH);
+      this.setDepth(BOX_WIDTH);
+      this.setHeight(BOX_WIDTH);
+      this.setMaterial(color);
+      color.setDiffuseColor(Color.DEEPSKYBLUE);
+      color.setSpecularColor(Color.CADETBLUE);
+//      this.setOpacity(1);
+    }
+    else
+    {
+      this.setWidth(0);
+      this.setDepth(0);
+      this.setHeight(0);
+      this.setMaterial(color);
+      color.setDiffuseColor(Color.FIREBRICK);
+      color.setSpecularColor(Color.CHOCOLATE);
+    }
+//    cell.setTranslateX(xMultiplier * BOX_WIDTH/2);
+//    cell.setTranslateY(yMultiplier * BOX_WIDTH/2);
+//    cell.setTranslateZ(zMultiplier * BOX_WIDTH/2);
   }
 
+  void birthOfCell()
+  {
+
+  }
+
+
+  void deathOfCell()
+  {
+
+  }
 }
