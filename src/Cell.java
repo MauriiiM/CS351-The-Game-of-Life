@@ -27,7 +27,7 @@ class Cell extends Box
       this.setMaterial(color);
       color.setDiffuseColor(Color.DEEPSKYBLUE);
       color.setSpecularColor(Color.CADETBLUE);
-//      this.setOpacity(1);
+      this.setOpacity(1);
     }
     else
     {

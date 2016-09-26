@@ -34,27 +34,31 @@ public class TheGameOfLife extends Application
   private void buildCamera()
   {
     camera = new PerspectiveCamera(true);
-    camera.setFieldOfView(500);
     scene.setCamera(camera);
     cameraGroup.getChildren().add(camera);
     root.getChildren().add(cameraGroup);
-    camera.setRotate(45);
-    camera.setTranslateZ(-600);
-//    System.out.println(camera.getFieldOfView());
+    camera.setFieldOfView(40);
+//    camera.setTranslateX(300);
+//    cameraGroup.setTranslateZ(300);
+    System.out.println("FOV = " + camera.getFieldOfView() +
+            "\nXpos = " + cameraGroup.getTranslateX() +
+            "\nYpos = " + cameraGroup.getTranslateY() +
+            "\nZpos = " + cameraGroup.getTranslateZ());
   }
 
-  private void createGame()
+  private void createCells()
   {
+    int offset = 320;
     for (int y = 1; y < 31; y++)
     {
       for (int x = 1; x < 31; x++)
       {
         for (int z = 1; z < 31; z++)
         {
-          cells[x][y][z] = new Cell(random.nextBoolean());
-          cells[x][y][z].setTranslateX(x * cells[x][y][z].BOX_WIDTH + 00);
-          cells[x][y][z].setTranslateY(y * cells[x][y][z].BOX_WIDTH  - 100);
-          cells[x][y][z].setTranslateZ(z * cells[x][y][z].BOX_WIDTH - 500);
+          cells[x][y][z] = new Cell(false);
+          cells[x][y][z].setTranslateX(x * cells[x][y][z].BOX_WIDTH - offset);
+          cells[x][y][z].setTranslateY(y * cells[x][y][z].BOX_WIDTH - offset);
+          cells[x][y][z].setTranslateZ(z * cells[x][y][z].BOX_WIDTH - offset);
           cells[x][y][z].setX(x);
           cells[x][y][z].setY(y);
           cells[x][y][z].setZ(z);
@@ -81,7 +85,7 @@ public class TheGameOfLife extends Application
     scene.setFill(bg);
 
     buildCamera();
-    createGame();
+    createCells();
 
     primaryStage.setScene(scene);
 
