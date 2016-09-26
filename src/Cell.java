@@ -9,7 +9,7 @@ import java.util.Random;
  */
 class Cell extends Box
 {
-  final int BOX_WIDTH = 20;
+  final int BOX_WIDTH = 10;
 
   private Box cell;
   private boolean isAlive;
@@ -27,7 +27,7 @@ class Cell extends Box
       this.setMaterial(color);
       color.setDiffuseColor(Color.DEEPSKYBLUE);
       color.setSpecularColor(Color.CADETBLUE);
-      this.setOpacity(1);
+      this.setOpacity(0.5);
     }
     else
     {

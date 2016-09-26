@@ -3,7 +3,9 @@
  */
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
@@ -24,7 +26,7 @@ public class TheGameOfLife extends Application
 
   private LinearGradient bg;
   private Random random = new Random();
-
+  private MouseHandler mouseHandler;
 
   private static final Stop WHITE_END = new Stop(.75, Color.BLACK);
   private static final Stop AQUA = new Stop(0, Color.AQUA);
@@ -39,7 +41,7 @@ public class TheGameOfLife extends Application
     root.getChildren().add(cameraGroup);
     camera.setFieldOfView(40);
 //    camera.setTranslateX(300);
-//    cameraGroup.setTranslateZ(300);
+    cameraGroup.setTranslateZ(-200);
     System.out.println("FOV = " + camera.getFieldOfView() +
             "\nXpos = " + cameraGroup.getTranslateX() +
             "\nYpos = " + cameraGroup.getTranslateY() +
@@ -48,7 +50,7 @@ public class TheGameOfLife extends Application
 
   private void createCells()
   {
-    int offset = 320;
+    int offset = 160;
     for (int y = 1; y < 31; y++)
     {
       for (int x = 1; x < 31; x++)
@@ -83,6 +85,8 @@ public class TheGameOfLife extends Application
     bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
     scene = new Scene(root, 1024, 768, true);
     scene.setFill(bg);
+    mouseHandler = new MouseHandler(scene);
+    scene.addEventHandler(MouseEvent.ANY, mouseHandler);
 
     buildCamera();
     createCells();
