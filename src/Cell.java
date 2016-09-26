@@ -13,6 +13,7 @@ class Cell extends Box
 
   private Box cell;
   private boolean isAlive;
+  private int x, y, z;
   PhongMaterial color = new PhongMaterial();
 
   Cell(boolean isAlive)
@@ -30,9 +31,9 @@ class Cell extends Box
     }
     else
     {
-      this.setWidth(0);
-      this.setDepth(0);
-      this.setHeight(0);
+      this.setWidth(BOX_WIDTH * .1);
+      this.setDepth(BOX_WIDTH * .1);
+      this.setHeight(BOX_WIDTH * .1);
       this.setMaterial(color);
       color.setDiffuseColor(Color.FIREBRICK);
       color.setSpecularColor(Color.CHOCOLATE);
@@ -40,6 +41,36 @@ class Cell extends Box
 //    cell.setTranslateX(xMultiplier * BOX_WIDTH/2);
 //    cell.setTranslateY(yMultiplier * BOX_WIDTH/2);
 //    cell.setTranslateZ(zMultiplier * BOX_WIDTH/2);
+  }
+
+  public int getX()
+  {
+    return x;
+  }
+
+  public void setX(int x)
+  {
+    this.x = x;
+  }
+
+  public int getY()
+  {
+    return y;
+  }
+
+  public void setY(int y)
+  {
+    this.y = y;
+  }
+
+  public int getZ()
+  {
+    return z;
+  }
+
+  public void setZ(int z)
+  {
+    this.z = z;
   }
 
   void birthOfCell()

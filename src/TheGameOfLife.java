@@ -16,11 +16,12 @@ import java.util.Random;
 public class TheGameOfLife extends Application
 {
   //groups
+  private Scene scene;
+  private PerspectiveCamera camera;
+  private Group cameraGroup = new Group();
   private Group root = new Group();
-  private Group camera = new Group();
   private Group world = new Group();
 
-  private Scene scene;
   private LinearGradient bg;
   private Random random = new Random();
 
@@ -32,22 +33,32 @@ public class TheGameOfLife extends Application
 
   private void buildCamera()
   {
-
+    camera = new PerspectiveCamera(true);
+    camera.setFieldOfView(500);
+    scene.setCamera(camera);
+    cameraGroup.getChildren().add(camera);
+    root.getChildren().add(cameraGroup);
+    camera.setRotate(45);
+    camera.setTranslateZ(-600);
+//    System.out.println(camera.getFieldOfView());
   }
 
-   private void createGame()
+  private void createGame()
   {
-    int seperator;
-    for(int y = 1; y < 31; y++)
+    for (int y = 1; y < 31; y++)
     {
-      for(int x = 1; x < 31; x++)
+      for (int x = 1; x < 31; x++)
       {
-        for(int z = 1; z < 31; z++)
+        for (int z = 1; z < 31; z++)
         {
           cells[x][y][z] = new Cell(random.nextBoolean());
-          cells[x][y][z].setTranslateX(x*cells[x][y][z].BOX_WIDTH );
-          cells[x][y][z].setTranslateY(y*cells[x][y][z].BOX_WIDTH);
-          cells[x][y][z].setTranslateZ(z*cells[x][y][z].BOX_WIDTH);
+          cells[x][y][z].setTranslateX(x * cells[x][y][z].BOX_WIDTH + 00);
+          cells[x][y][z].setTranslateY(y * cells[x][y][z].BOX_WIDTH  - 100);
+          cells[x][y][z].setTranslateZ(z * cells[x][y][z].BOX_WIDTH - 500);
+          cells[x][y][z].setX(x);
+          cells[x][y][z].setY(y);
+          cells[x][y][z].setZ(z);
+
           root.getChildren().add(cells[x][y][z]);
         }
       }
