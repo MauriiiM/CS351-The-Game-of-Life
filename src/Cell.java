@@ -7,7 +7,7 @@ import javafx.scene.shape.Box;
  */
 class Cell extends Box
 {
-  final int BOX_WIDTH = 6;
+  final int BOX_WIDTH = 4;
 
   private Box cell;
   private boolean isAlive;
