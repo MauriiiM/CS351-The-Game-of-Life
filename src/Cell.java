@@ -2,14 +2,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
-import java.util.Random;
-
 /**
  * @author Mauricio Monsivais
  */
 class Cell extends Box
 {
-  final int BOX_WIDTH = 10;
+  final int BOX_WIDTH = 6;
 
   private Box cell;
   private boolean isAlive;
@@ -19,18 +17,21 @@ class Cell extends Box
   Cell(boolean isAlive)
   {
     this.isAlive = isAlive;
+    this.setOpacity(0.6);
+    this.setMouseTransparent(true);
+
     if (isAlive)
     {
-      this.setWidth(BOX_WIDTH);
-      this.setDepth(BOX_WIDTH);
-      this.setHeight(BOX_WIDTH);
+      this.setWidth(BOX_WIDTH * .9);
+      this.setDepth(BOX_WIDTH * .9);
+      this.setHeight(BOX_WIDTH * .9);
       this.setMaterial(color);
       color.setDiffuseColor(Color.DEEPSKYBLUE);
       color.setSpecularColor(Color.CADETBLUE);
-      this.setOpacity(0.5);
     }
     else
     {
+      // "*.1 because we want it to be a tenth of the size when dead"
       this.setWidth(BOX_WIDTH * .1);
       this.setDepth(BOX_WIDTH * .1);
       this.setHeight(BOX_WIDTH * .1);
@@ -38,9 +39,6 @@ class Cell extends Box
       color.setDiffuseColor(Color.FIREBRICK);
       color.setSpecularColor(Color.CHOCOLATE);
     }
-//    cell.setTranslateX(xMultiplier * BOX_WIDTH/2);
-//    cell.setTranslateY(yMultiplier * BOX_WIDTH/2);
-//    cell.setTranslateZ(zMultiplier * BOX_WIDTH/2);
   }
 
   public int getX()
