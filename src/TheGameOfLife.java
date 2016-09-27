@@ -55,8 +55,9 @@ public class TheGameOfLife extends Application
     scene.setCamera(camera);
     cameraGroup.getChildren().add(camera);
     root.getChildren().add(cameraGroup);
-    camera.setFieldOfView(90);
-    camera.setTranslateZ(-150);
+    camera.setFieldOfView(70);
+    camera.setTranslateZ(-200);
+    camera.setFarClip(500);
     camera.setDepthTest(DepthTest.ENABLE);
     cameraGroup.getTransforms().add(rotate);
 
@@ -102,7 +103,7 @@ public class TheGameOfLife extends Application
     bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
 
     //scene setup
-    scene = new Scene(root, 1080, 800,  true, SceneAntialiasing.DISABLED);
+    scene = new Scene(root, 1080, 800,  true, SceneAntialiasing.BALANCED);
     subscene = new SubScene(borderPane, 1080, 800);
     scene.setFill(bg);
 
@@ -116,7 +117,7 @@ public class TheGameOfLife extends Application
 //    borderPane.setCenter(root);
     borderPane.prefHeightProperty().bind(subscene.heightProperty());
     borderPane.prefWidthProperty().bind(subscene.widthProperty());
-    root.getChildren().add(subscene);
+    world.getChildren().add(subscene);
   }
 
   private void startAutoRotation()

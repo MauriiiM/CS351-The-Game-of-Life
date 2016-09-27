@@ -17,7 +17,7 @@ class Cell extends Box
   Cell(boolean isAlive)
   {
     this.isAlive = isAlive;
-    this.setOpacity(0.6);
+    this.setOpacity(0.1);
     this.setMouseTransparent(true);
 
     if (isAlive)
