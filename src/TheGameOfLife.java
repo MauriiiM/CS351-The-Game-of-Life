@@ -7,12 +7,17 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -24,6 +29,7 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.Observable;
 import java.util.Random;
 
 public class TheGameOfLife extends Application
@@ -34,6 +40,8 @@ public class TheGameOfLife extends Application
   private Button startButton;
   private Button rotateButton;
   private ComboBox dropDown;
+  private TextField textField;
+  private ObservableList<String> dropDownList;
 
   //groups
   private Scene scene;
@@ -53,22 +61,28 @@ public class TheGameOfLife extends Application
 
   private Cell[][][] cells = new Cell[32][32][32];
   private Cell[][][] cells2 = new Cell[32][32][32];
+  private int numDeadCell = 0;
+
+  HBox getButtonLayout()
+  {
+    return buttonLayout;
+  }
 
   PerspectiveCamera getCamera()
   {
     return camera;
   }
 
+  ComboBox getDropDown()
+  {
+    return dropDown;
+  }
+
   Button getRotateButton()
   {
     return rotateButton;
   }
-
-  Scene getScene()
-  {
-    return scene;
-  }
-
+  
   Button getStartButton()
   {
     return startButton;
@@ -79,13 +93,22 @@ public class TheGameOfLife extends Application
     return subscene;
   }
 
+  TextField getTextField()
+  {
+    return textField;
+  }
+
   Timeline getTimeline()
   {
     return timeline;
   }
 
+  void setNumDeadCell(int amount)
+  {
+    numDeadCell = amount;
+  }
 
-  void startAutoRotation(Timeline timeline, String onOff)
+  void startAutoRotation(Timeline timeline)
   {
     Rotate rotate = new Rotate(0, 0, 0);
 
@@ -93,7 +116,6 @@ public class TheGameOfLife extends Application
     timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
     timeline.setCycleCount(Animation.INDEFINITE);
     rotate.setAxis(Rotate.Y_AXIS);
-    timeline.play();
   }
 
   void startGame(Timeline timeline)
@@ -151,12 +173,27 @@ public class TheGameOfLife extends Application
     buttonLayout = new HBox();
     startButton = new Button("Start");
     rotateButton = new Button("Rotate: Off");
-    dropDown = new ComboBox<>();
+    textField = new TextField();
+    dropDownList = FXCollections.observableArrayList("Random Cells", "n Cells Alive", "Preset 1", "Preset 2", "Preset 3");
+    dropDown = new ComboBox<>(dropDownList);
     bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
+
+    //makes textfield only accept number
+    //http://stackoverflow.com/questions/7555564/what-is-the-recommended-way-to-make-a-numeric-textfield-in-javafx
+    textField.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!newValue.matches("\\d*")) {
+          textField.setText(newValue.replaceAll("[^\\d]", ""));
+        }
+      }
+    });
 
     //buttons
     startButton.setPrefSize(100, 20);
+    startButton.setDisable(true);
     rotateButton.setPrefSize(100, 20);
+    dropDown.setPrefSize(140, 20);
 
     //scene setup
     scene = new Scene(borderPane, 1080, 800);
@@ -164,10 +201,9 @@ public class TheGameOfLife extends Application
     subscene.setFill(Color.DARKVIOLET);
 
     //hbox setup
-
     buttonLayout.setPadding(new Insets(15, 12, 15, 12));
     buttonLayout.setSpacing(10);
-    buttonLayout.getChildren().addAll(startButton, rotateButton);
+    buttonLayout.getChildren().addAll(startButton, rotateButton, dropDown);
 
     borderPane.setTop(buttonLayout);
     borderPane.setCenter(subscene);
@@ -212,6 +248,10 @@ public class TheGameOfLife extends Application
     subscene.addEventHandler(MouseEvent.ANY, inputHandler);
     startButton.setOnAction(inputHandler);
     rotateButton.setOnAction(inputHandler);
+    textField.setOnAction(inputHandler);
+    dropDown.setOnAction(inputHandler);
+
+    startAutoRotation(timeline);
 
     primaryStage.setScene(scene);
     primaryStage.setTitle("The Game of Life");

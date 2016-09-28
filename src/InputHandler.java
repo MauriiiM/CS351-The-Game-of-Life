@@ -7,6 +7,8 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
@@ -20,10 +22,14 @@ public class InputHandler implements EventHandler
   private PerspectiveCamera camera;
   private Button startButton;
   private Button rotateButton;
+  private ComboBox dropDown;
+  private TextField textField;
   private Timeline timeline;
 
   private Object source;
 
+
+  private String selectedSet;
   double mousePosX;
   double mousePosY;
   double mouseOldX;
@@ -38,7 +44,9 @@ public class InputHandler implements EventHandler
     camera = game.getCamera();
     startButton = game.getStartButton();
     rotateButton = game.getRotateButton();
+    dropDown = game.getDropDown();
     timeline = game.getTimeline();
+    textField = game.getTextField();
   }
 
   @Override
@@ -64,15 +72,49 @@ public class InputHandler implements EventHandler
 
     if (source == rotateButton)
     {
-      if (rotateButton.getText().equals("Rotate: On")) rotateButton.setText("Rotate: Off");
-      else rotateButton.setText("Rotate: On");
-      game.startAutoRotation(timeline, rotateButton.getText());
+      if (rotateButton.getText().equals("Rotate: Off"))
+      {
+        rotateButton.setText("Rotate: On");
+        timeline.pause();
+      }
+      else
+      {
+        rotateButton.setText("Rotate: Off");
+        timeline.play();
+      }
     }
     else if (source == startButton)
     {
-      if (startButton.getText().equals("Start")) startButton.setText("Pause");
-      else startButton.setText("Start");
+      if (startButton.getText().equals("Start"))
+      {
+        startButton.setText("Pause");
+      }
+      else
+      {
+        startButton.setText("Start");
+      }
       game.startGame(timeline);
+    }
+    else if(source == dropDown)
+    {
+      selectedSet = dropDown.getValue().toString();
+      if (selectedSet.equals("n Cells Alive"))
+      {
+        startButton.setDisable(true);
+        game.getButtonLayout().getChildren().add(textField);
+      }
+      else
+      {
+        startButton.setDisable(false);
+        game.getButtonLayout().getChildren().remove(textField);
+      }
+    }
+    else if (source == textField)
+    {
+      System.out.println(textField.getText());
+      game.setNumDeadCell(Integer.parseInt(textField.getText()));
+      textField.clear();
+      if(selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
     }
   }
 
@@ -83,9 +125,6 @@ public class InputHandler implements EventHandler
 
   private void handleMouse(MouseEvent event)
   {
-    System.out.println(event.getEventType());
-    System.out.println(event.getTarget());
-
     if (((MouseEvent) event).isPrimaryButtonDown())
     {
       subscene.cursorProperty().setValue(Cursor.CLOSED_HAND);

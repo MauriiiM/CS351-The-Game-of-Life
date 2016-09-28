@@ -86,11 +86,24 @@ class Cell extends Box
 
   void birthOfCell()
   {
-
+    isAlive = true;
+    this.setWidth(boxSide * .9);
+    this.setDepth(boxSide * .9);
+    this.setHeight(boxSide * .9);
+    this.setMaterial(color);
+    color.setDiffuseColor(Color.DEEPSKYBLUE);
+    color.setSpecularColor(Color.CADETBLUE);
   }
 
   void deathOfCell()
   {
-
+    // "*.1 because we want it to be a tenth of the size when dead"
+    this.setWidth(boxSide * .1);
+    this.setDepth(boxSide * .1);
+    this.setHeight(boxSide * .1);
+    this.setMaterial(color);
+    color.setDiffuseColor(Color.FIREBRICK);
+    color.setSpecularColor(Color.CHOCOLATE);
+    this.setOpacity(0);
   }
 }
