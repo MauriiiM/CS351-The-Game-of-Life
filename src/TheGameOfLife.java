@@ -7,6 +7,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -20,15 +22,16 @@ import javafx.scene.paint.Stop;
 import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import java.util.Random;
 
 public class TheGameOfLife extends Application
 {
   //GUI
-  BorderPane borderPane;
-  HBox buttonLayout;
-  Button startButton;
-  Button rotateButton;
+  private BorderPane borderPane;
+  private HBox buttonLayout;
+  private Button startButton;
+  private Button rotateButton;
 
   //groups
   private Scene scene;
@@ -40,14 +43,61 @@ public class TheGameOfLife extends Application
 
   private LinearGradient bg;
   private Random random = new Random();
-  private MouseHandler mouseHandler;
-
-  private Rotate rotate = new Rotate(0, 0, 0);
+  private InputHandler inputHandler;
+  private Timeline timeline;
 
   private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
   private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
 
   private Cell[][][] cells = new Cell[32][32][32];
+  private Cell[][][] cells2 = new Cell[32][32][32];
+
+  PerspectiveCamera getCamera()
+  {
+    return camera;
+  }
+
+  Button getRotateButton()
+  {
+    return rotateButton;
+  }
+
+  Scene getScene()
+  {
+    return scene;
+  }
+
+  Button getStartButton()
+  {
+    return startButton;
+  }
+
+  SubScene getSubscene()
+  {
+    return subscene;
+  }
+
+  Timeline getTimeline()
+  {
+    return timeline;
+  }
+
+
+  void startAutoRotation(Timeline timeline, String onOff)
+  {
+    Rotate rotate = new Rotate(0, 0, 0);
+
+    cameraGroup.getTransforms().add(rotate);
+    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
+    timeline.setCycleCount(Animation.INDEFINITE);
+    rotate.setAxis(Rotate.Y_AXIS);
+    timeline.play();
+  }
+
+  void startGame(Timeline timeline)
+  {
+
+  }
 
   private void buildCamera()
   {
@@ -59,19 +109,14 @@ public class TheGameOfLife extends Application
     camera.setTranslateZ(-200);
     camera.setFarClip(500);
     camera.setDepthTest(DepthTest.ENABLE);
-    cameraGroup.getTransforms().add(rotate);
 
-    System.out.println("FOV = " + camera.getFieldOfView() +
-            "\nDepthTest = " + camera.getDepthTest() +
-            "\ncameraGroup-Xpos = " + cameraGroup.getTranslateX() +
-            "\ncameraGroup-Ypos = " + cameraGroup.getTranslateY() +
-            "\ncameraGroup-Zpos = " + cameraGroup.getTranslateZ()+
-            "\n\ncamera-Xpos = " + camera.getTranslateX() +
-            "\ncamera-Ypos = " + camera.getTranslateY() +
-            "\ncamera-Zpos = " + camera.getTranslateZ());
+    System.out.println("FOV = " + camera.getFieldOfView() + "\nDepthTest = " + camera.getDepthTest() + "\ncameraGroup-Xpos = " + cameraGroup.getTranslateX() + "\ncameraGroup-Ypos = " + cameraGroup.getTranslateY() + "\ncameraGroup-Zpos = " + cameraGroup.getTranslateZ() + "\n\ncamera-Xpos = " + camera.getTranslateX() + "\ncamera-Ypos = " + camera.getTranslateY() + "\ncamera-Zpos = " + camera.getTranslateZ());
   }
 
-  private void createCells()
+  /**
+   * Creates 30x30x30 structure of cells pseudo-randomly chosen to be dead/alive
+   */
+  private void createRandomCells()
   {
     int offset = 58; //used to center "life cube" on the axis
     for (int y = 1; y < 31; y++)
@@ -81,9 +126,10 @@ public class TheGameOfLife extends Application
         for (int z = 1; z < 31; z++)
         {
           cells[x][y][z] = new Cell(random.nextBoolean());
-          cells[x][y][z].setTranslateX(x * cells[x][y][z].BOX_WIDTH - offset);
-          cells[x][y][z].setTranslateY(y * cells[x][y][z].BOX_WIDTH - offset);
-          cells[x][y][z].setTranslateZ(z * cells[x][y][z].BOX_WIDTH - offset);
+          cells2[x][y][z] = new Cell();
+          cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
           cells[x][y][z].setX(x);
           cells[x][y][z].setY(y);
           cells[x][y][z].setZ(z);
@@ -94,22 +140,28 @@ public class TheGameOfLife extends Application
     }
   }
 
+  /**
+   * sets up stage borders (i.e. UI on top, and 3D model under it)
+   */
   private void setupLayout()
   {
     borderPane = new BorderPane();
     buttonLayout = new HBox();
-    startButton = new Button("START");
-    rotateButton = new Button("rotate");
+    startButton = new Button("Start");
+    rotateButton = new Button("Rotate: Off");
     bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
+
+    //buttons
+    startButton.setPrefSize(100, 20);
+    rotateButton.setPrefSize(100, 20);
 
     //scene setup
     scene = new Scene(borderPane, 1080, 800);
-    subscene = new SubScene(root, 1080, 800, true, SceneAntialiasing.DISABLED);
-    subscene.setFill(Color.BLUEVIOLET);
+    subscene = new SubScene(root, 1080, 700, true, SceneAntialiasing.DISABLED);
+    subscene.setFill(Color.DARKVIOLET);
 
     //hbox setup
-    startButton.setPrefSize(100, 20);
-    rotateButton.setPrefSize(100, 20);
+
     buttonLayout.setPadding(new Insets(15, 12, 15, 12));
     buttonLayout.setSpacing(10);
     buttonLayout.getChildren().addAll(startButton, rotateButton);
@@ -122,13 +174,20 @@ public class TheGameOfLife extends Application
     root.setDepthTest(DepthTest.ENABLE);
   }
 
-  private void startAutoRotation()
+  private Cell[][][] updateCells(Cell[][][] current, Cell[][][] updated)
   {
-    final Timeline rotationAnimation = new Timeline();
-    rotationAnimation.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
-    rotationAnimation.setCycleCount(Animation.INDEFINITE);
-    rotate.setAxis(Rotate.Y_AXIS);
-    rotationAnimation.play();
+    int neighbors = 0;
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+          if (current[x][y][z] != null) ;
+        }
+      }
+    }
+    return updated;
   }
 
   public static void main(String[] args)
@@ -139,12 +198,17 @@ public class TheGameOfLife extends Application
   @Override
   public void start(Stage primaryStage)
   {
+    timeline = new Timeline();
+
     setupLayout();
-    mouseHandler = new MouseHandler(scene, camera);
-    subscene.addEventHandler(MouseEvent.ANY, mouseHandler);
+    inputHandler = new InputHandler(this);
     buildCamera();
-    createCells();
-    startAutoRotation();
+    createRandomCells();
+    startGame(timeline);
+
+    subscene.addEventHandler(MouseEvent.ANY, inputHandler);
+    startButton.setOnAction(inputHandler);
+    rotateButton.setOnAction(inputHandler);
 
     primaryStage.setScene(scene);
     primaryStage.setTitle("The Game of Life");

@@ -7,24 +7,26 @@ import javafx.scene.shape.Box;
  */
 class Cell extends Box
 {
-  final int BOX_WIDTH = 4;
-
   private Box cell;
   private boolean isAlive;
   private int x, y, z;
+  private float boxSide = 4;
   PhongMaterial color = new PhongMaterial();
+
+  Cell()
+  {
+
+  }
 
   Cell(boolean isAlive)
   {
     this.isAlive = isAlive;
-    this.setOpacity(0.1);
-    this.setMouseTransparent(true);
 
     if (isAlive)
     {
-      this.setWidth(BOX_WIDTH * .9);
-      this.setDepth(BOX_WIDTH * .9);
-      this.setHeight(BOX_WIDTH * .9);
+      this.setWidth(boxSide * .9);
+      this.setDepth(boxSide * .9);
+      this.setHeight(boxSide * .9);
       this.setMaterial(color);
       color.setDiffuseColor(Color.DEEPSKYBLUE);
       color.setSpecularColor(Color.CADETBLUE);
@@ -32,12 +34,13 @@ class Cell extends Box
     else
     {
       // "*.1 because we want it to be a tenth of the size when dead"
-      this.setWidth(BOX_WIDTH * .1);
-      this.setDepth(BOX_WIDTH * .1);
-      this.setHeight(BOX_WIDTH * .1);
+      this.setWidth(boxSide * .1);
+      this.setDepth(boxSide * .1);
+      this.setHeight(boxSide * .1);
       this.setMaterial(color);
       color.setDiffuseColor(Color.FIREBRICK);
       color.setSpecularColor(Color.CHOCOLATE);
+      this.setOpacity(0);
     }
   }
 
@@ -46,7 +49,17 @@ class Cell extends Box
     return x;
   }
 
-  public void setX(int x)
+  public float getBoxSide()
+  {
+    return boxSide;
+  }
+
+  public void setBoxSide(float boxSide)
+  {
+    this.boxSide = boxSide;
+  }
+
+  void setX(int x)
   {
     this.x = x;
   }
@@ -56,7 +69,7 @@ class Cell extends Box
     return y;
   }
 
-  public void setY(int y)
+  void setY(int y)
   {
     this.y = y;
   }
@@ -66,7 +79,7 @@ class Cell extends Box
     return z;
   }
 
-  public void setZ(int z)
+  void setZ(int z)
   {
     this.z = z;
   }
@@ -75,7 +88,6 @@ class Cell extends Box
   {
 
   }
-
 
   void deathOfCell()
   {
