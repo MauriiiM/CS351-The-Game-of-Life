@@ -34,9 +34,9 @@ public class TheGameOfLife extends Application
   private Scene scene;
   private SubScene subscene;
   private PerspectiveCamera camera;
-  private Group cameraGroup = new Group();
   private Group root = new Group();
   private Group world = new Group();
+  private Group cameraGroup = new Group();
 
   private LinearGradient bg;
   private Random random = new Random();
@@ -52,7 +52,7 @@ public class TheGameOfLife extends Application
   private void buildCamera()
   {
     camera = new PerspectiveCamera(true);
-    scene.setCamera(camera);
+    subscene.setCamera(camera);
     cameraGroup.getChildren().add(camera);
     root.getChildren().add(cameraGroup);
     camera.setFieldOfView(70);
@@ -103,21 +103,23 @@ public class TheGameOfLife extends Application
     bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
 
     //scene setup
-    scene = new Scene(root, 1080, 800,  true, SceneAntialiasing.BALANCED);
-    subscene = new SubScene(borderPane, 1080, 800);
-    scene.setFill(bg);
+    scene = new Scene(borderPane, 1080, 800);
+    subscene = new SubScene(root, 1080, 800, true, SceneAntialiasing.DISABLED);
+    subscene.setFill(Color.BLUEVIOLET);
 
     //hbox setup
     startButton.setPrefSize(100, 20);
+    rotateButton.setPrefSize(100, 20);
     buttonLayout.setPadding(new Insets(15, 12, 15, 12));
     buttonLayout.setSpacing(10);
     buttonLayout.getChildren().addAll(startButton, rotateButton);
 
     borderPane.setTop(buttonLayout);
-//    borderPane.setCenter(root);
+    borderPane.setCenter(subscene);
     borderPane.prefHeightProperty().bind(subscene.heightProperty());
     borderPane.prefWidthProperty().bind(subscene.widthProperty());
-    world.getChildren().add(subscene);
+    root.getChildren().add(world);
+    root.setDepthTest(DepthTest.ENABLE);
   }
 
   private void startAutoRotation()
@@ -138,10 +140,8 @@ public class TheGameOfLife extends Application
   public void start(Stage primaryStage)
   {
     setupLayout();
-    root.getChildren().add(world);
-    root.setDepthTest(DepthTest.ENABLE);
     mouseHandler = new MouseHandler(scene, camera);
-    scene.addEventHandler(MouseEvent.ANY, mouseHandler);
+    subscene.addEventHandler(MouseEvent.ANY, mouseHandler);
     buildCamera();
     createCells();
     startAutoRotation();
