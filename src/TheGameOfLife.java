@@ -12,6 +12,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -32,6 +33,7 @@ public class TheGameOfLife extends Application
   private HBox buttonLayout;
   private Button startButton;
   private Button rotateButton;
+  private ComboBox dropDown;
 
   //groups
   private Scene scene;
@@ -149,6 +151,7 @@ public class TheGameOfLife extends Application
     buttonLayout = new HBox();
     startButton = new Button("Start");
     rotateButton = new Button("Rotate: Off");
+    dropDown = new ComboBox<>();
     bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
 
     //buttons
