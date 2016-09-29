@@ -21,17 +21,22 @@ class Cell extends Box
     else setDead();
   }
 
-  public int getX()
+  boolean getIsAlive()
+  {
+    return isAlive;
+  }
+
+  int getX()
   {
     return x;
   }
 
-  public float getBoxSide()
+  float getBoxSide()
   {
     return boxSide;
   }
 
-  public void setBoxSide(float boxSide)
+  void setBoxSide(float boxSide)
   {
     this.boxSide = boxSide;
   }
@@ -41,7 +46,7 @@ class Cell extends Box
     this.x = x;
   }
 
-  public int getY()
+  int getY()
   {
     return y;
   }
@@ -51,7 +56,7 @@ class Cell extends Box
     this.y = y;
   }
 
-  public int getZ()
+  int getZ()
   {
     return z;
   }

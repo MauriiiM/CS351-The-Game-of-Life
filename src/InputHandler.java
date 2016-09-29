@@ -135,7 +135,7 @@ public class InputHandler implements EventHandler
       {
         startButton.setText("Start");
       }
-      game.startGame(timeline);
+      game.startGame();
     }
     else if (source == textField)
     {

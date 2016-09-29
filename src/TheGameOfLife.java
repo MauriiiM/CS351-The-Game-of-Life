@@ -1,7 +1,4 @@
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -215,9 +212,16 @@ public class TheGameOfLife extends Application
     this.r4 = r4;
   }
 
-  void startGame(Timeline timeline)
+  void startGame()
   {
+    Transition timer = new Transition()
+    {
+      @Override
+      protected void interpolate(double frac)
+      {
 
+      }
+    };
   }
 
   private void buildCamera()
@@ -230,6 +234,21 @@ public class TheGameOfLife extends Application
     camera.setTranslateZ(-200);
     camera.setFarClip(500);
     camera.setDepthTest(DepthTest.ENABLE);
+  }
+
+  private void decideLife()
+  {
+    int neighboys = 0;
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+          if(cells[x][y][z-1].getIsAlive());
+        }
+      }
+    }
   }
 
   private void setEventHandler()
@@ -253,7 +272,7 @@ public class TheGameOfLife extends Application
   {
     //ComboBoxes
     ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2", "Preset 3");
-    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27);
+    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     dropDown = new ComboBox<>(dropDownList);
     dropDown.setPromptText("Cell Structure");
     r1dropDown = new ComboBox<>(rNeighbor);
@@ -349,7 +368,6 @@ public class TheGameOfLife extends Application
 
     setupLayout();
     buildCamera();
-    startGame(timeline);
     startAutoRotation(timeline);
 
     setEventHandler();
