@@ -62,6 +62,7 @@ public class TheGameOfLife extends Application
   private Cell[][][] cells = new Cell[32][32][32];
   private Cell[][][] cells2 = new Cell[32][32][32];
   private int numDeadCell = 0;
+  private boolean isMegaCellClear = true;
 
   HBox getButtonLayout()
   {
@@ -82,7 +83,7 @@ public class TheGameOfLife extends Application
   {
     return rotateButton;
   }
-  
+
   Button getStartButton()
   {
     return startButton;
@@ -101,6 +102,77 @@ public class TheGameOfLife extends Application
   Timeline getTimeline()
   {
     return timeline;
+  }
+
+  boolean isMegaCellClear()
+  {
+    return isMegaCellClear;
+  }
+
+  void clearMegaCell()
+  {
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+          cells[x][y][z] = null;
+        }
+      }
+    }
+    isMegaCellClear = true;
+  }
+
+  /**
+   * Creates 30x30x30 structure of cells pseudo-randomly chosen to be dead/alive
+   */
+  void createRandomCells()
+  {
+    isMegaCellClear = false;
+    int offset = 58; //used to center "life cube" on the axis
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+          cells[x][y][z] = new Cell(random.nextBoolean());
+          cells2[x][y][z] = new Cell();
+          cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setX(x);
+          cells[x][y][z].setY(y);
+          cells[x][y][z].setZ(z);
+
+          root.getChildren().add(cells[x][y][z]);
+        }
+      }
+    }
+  }
+
+  void createEmptyCells()
+  {
+    int offset = 58; //used to center "life cube" on the axis
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+
+        }
+      }
+    }
+  }
+
+  void fillEmptyCells()
+  {
+    for (int i = 0; i < numDeadCell; i++)
+    {
+
+    }
   }
 
   void setNumDeadCell(int amount)
@@ -133,35 +205,6 @@ public class TheGameOfLife extends Application
     camera.setTranslateZ(-200);
     camera.setFarClip(500);
     camera.setDepthTest(DepthTest.ENABLE);
-
-    System.out.println("FOV = " + camera.getFieldOfView() + "\nDepthTest = " + camera.getDepthTest() + "\ncameraGroup-Xpos = " + cameraGroup.getTranslateX() + "\ncameraGroup-Ypos = " + cameraGroup.getTranslateY() + "\ncameraGroup-Zpos = " + cameraGroup.getTranslateZ() + "\n\ncamera-Xpos = " + camera.getTranslateX() + "\ncamera-Ypos = " + camera.getTranslateY() + "\ncamera-Zpos = " + camera.getTranslateZ());
-  }
-
-  /**
-   * Creates 30x30x30 structure of cells pseudo-randomly chosen to be dead/alive
-   */
-  private void createRandomCells()
-  {
-    int offset = 58; //used to center "life cube" on the axis
-    for (int y = 1; y < 31; y++)
-    {
-      for (int x = 1; x < 31; x++)
-      {
-        for (int z = 1; z < 31; z++)
-        {
-          cells[x][y][z] = new Cell(random.nextBoolean());
-          cells2[x][y][z] = new Cell();
-          cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setX(x);
-          cells[x][y][z].setY(y);
-          cells[x][y][z].setZ(z);
-
-          root.getChildren().add(cells[x][y][z]);
-        }
-      }
-    }
   }
 
   /**
@@ -180,10 +223,13 @@ public class TheGameOfLife extends Application
 
     //makes textfield only accept number
     //http://stackoverflow.com/questions/7555564/what-is-the-recommended-way-to-make-a-numeric-textfield-in-javafx
-    textField.textProperty().addListener(new ChangeListener<String>() {
+    textField.textProperty().addListener(new ChangeListener<String>()
+    {
       @Override
-      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        if (!newValue.matches("\\d*")) {
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
+      {
+        if (!newValue.matches("\\d*"))
+        {
           textField.setText(newValue.replaceAll("[^\\d]", ""));
         }
       }
@@ -242,7 +288,6 @@ public class TheGameOfLife extends Application
     setupLayout();
     inputHandler = new InputHandler(this);
     buildCamera();
-    createRandomCells();
     startGame(timeline);
 
     subscene.addEventHandler(MouseEvent.ANY, inputHandler);

@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.StrokeLineCap;
 
 /**
  * @author Mauricio Monsivais
@@ -29,7 +30,8 @@ public class InputHandler implements EventHandler
   private Object source;
 
 
-  private String selectedSet;
+  private String currentSet = "";
+  private String selectedSet = "";
   double mousePosX;
   double mousePosY;
   double mouseOldX;
@@ -88,6 +90,40 @@ public class InputHandler implements EventHandler
       if (startButton.getText().equals("Start"))
       {
         startButton.setText("Pause");
+        if (!currentSet.equals(selectedSet)) //want to switch to different cell set
+        {
+          if (!game.isMegaCellClear())
+          {
+            System.out.println("Clearing Cell Structure");
+            game.clearMegaCell();
+          }
+
+          currentSet = selectedSet;
+          switch (selectedSet)
+          {
+            case "Random Cells":
+              System.out.println("creating Random Cells");
+              game.createRandomCells();
+              break;
+            case "n Cells Alive":
+              System.out.println("creating n Random Cells");
+              game.createEmptyCells();
+              break;
+            case "Preset 1":
+              System.out.println("creating preset 1");
+//            game.createPreset1();
+              break;
+            case "Preset 2":
+              System.out.println("creating preset 2");
+//            game.createPreset2();
+              break;
+            case "Preset 3":
+              System.out.println("creating preset 3");
+//            game.createPreset3();
+              break;
+          }
+
+        }
       }
       else
       {
@@ -95,13 +131,15 @@ public class InputHandler implements EventHandler
       }
       game.startGame(timeline);
     }
-    else if(source == dropDown)
+    else if (source == dropDown)
     {
       selectedSet = dropDown.getValue().toString();
+      if (!currentSet.equals(dropDown)) startButton.setText("Start");
       if (selectedSet.equals("n Cells Alive"))
       {
         startButton.setDisable(true);
         game.getButtonLayout().getChildren().add(textField);
+        game.createEmptyCells();
       }
       else
       {
@@ -113,8 +151,7 @@ public class InputHandler implements EventHandler
     {
       System.out.println(textField.getText());
       game.setNumDeadCell(Integer.parseInt(textField.getText()));
-      textField.clear();
-      if(selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
+      if (selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
     }
   }
 
