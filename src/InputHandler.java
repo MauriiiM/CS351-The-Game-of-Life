@@ -4,14 +4,12 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.Scene;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.StrokeLineCap;
 
 /**
  * @author Mauricio Monsivais
@@ -23,7 +21,7 @@ public class InputHandler implements EventHandler
   private PerspectiveCamera camera;
   private Button startButton;
   private Button rotateButton;
-  private ComboBox dropDown;
+  private ComboBox dropDown, r1DropDown,r2DropDown,r3DropDown,r4DropDown;
   private TextField textField;
   private Timeline timeline;
 
@@ -32,6 +30,10 @@ public class InputHandler implements EventHandler
 
   private String currentSet = "";
   private String selectedSet = "";
+  private int r1 = 0;
+  private int r2 = 0;
+  private int r3 = 0;
+  private int r4 = 0;
   double mousePosX;
   double mousePosY;
   double mouseOldX;
@@ -47,6 +49,10 @@ public class InputHandler implements EventHandler
     startButton = game.getStartButton();
     rotateButton = game.getRotateButton();
     dropDown = game.getDropDown();
+    r1DropDown = game.getR1dropDown();
+    r2DropDown = game.getR2dropDown();
+    r3DropDown = game.getR3dropDown();
+    r4DropDown = game.getR4dropDown();
     timeline = game.getTimeline();
     textField = game.getTextField();
   }
@@ -107,7 +113,8 @@ public class InputHandler implements EventHandler
               break;
             case "n Cells Alive":
               System.out.println("creating n Random Cells");
-              game.createEmptyCells();
+              game.createDeadCells();
+              game.randomCellsToLife();
               break;
             case "Preset 1":
               System.out.println("creating preset 1");
@@ -122,7 +129,6 @@ public class InputHandler implements EventHandler
 //            game.createPreset3();
               break;
           }
-
         }
       }
       else
@@ -130,6 +136,12 @@ public class InputHandler implements EventHandler
         startButton.setText("Start");
       }
       game.startGame(timeline);
+    }
+    else if (source == textField)
+    {
+      System.out.println(textField.getText());
+      game.setNumDeadCell(Integer.parseInt(textField.getText()));
+      if (selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
     }
     else if (source == dropDown)
     {
@@ -139,7 +151,6 @@ public class InputHandler implements EventHandler
       {
         startButton.setDisable(true);
         game.getButtonLayout().getChildren().add(textField);
-        game.createEmptyCells();
       }
       else
       {
@@ -147,12 +158,11 @@ public class InputHandler implements EventHandler
         game.getButtonLayout().getChildren().remove(textField);
       }
     }
-    else if (source == textField)
-    {
-      System.out.println(textField.getText());
-      game.setNumDeadCell(Integer.parseInt(textField.getText()));
-      if (selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
-    }
+    else if (source == r1DropDown) r1 = Integer.parseInt(r1DropDown.getValue().toString());
+    else if (source == r2DropDown) r2 = Integer.parseInt(r2DropDown.getValue().toString());
+    else if (source == r3DropDown) r3 = Integer.parseInt(r3DropDown.getValue().toString());
+    else if (source == r4DropDown) r4 = Integer.parseInt(r4DropDown.getValue().toString());
+    game.setRs(r1,r2,r3,r4);
   }
 
   private void handleKeyEvent(KeyEvent event)
@@ -162,7 +172,7 @@ public class InputHandler implements EventHandler
 
   private void handleMouse(MouseEvent event)
   {
-    if (((MouseEvent) event).isPrimaryButtonDown())
+    if (event.isPrimaryButtonDown())
     {
       subscene.cursorProperty().setValue(Cursor.CLOSED_HAND);
 

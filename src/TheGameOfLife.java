@@ -1,7 +1,3 @@
-/**
- * Created by mmons on 9/22/2016.
- */
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -11,8 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
@@ -29,19 +23,23 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.Observable;
 import java.util.Random;
 
+/**
+ * @author Mauricio Monsivais
+ */
 public class TheGameOfLife extends Application
 {
   //GUI
-  private BorderPane borderPane;
   private HBox buttonLayout;
   private Button startButton;
   private Button rotateButton;
   private ComboBox dropDown;
   private TextField textField;
-  private ObservableList<String> dropDownList;
+  private ComboBox r1dropDown;
+  private ComboBox r2dropDown;
+  private ComboBox r3dropDown;
+  private ComboBox r4dropDown;
 
   //groups
   private Scene scene;
@@ -51,9 +49,7 @@ public class TheGameOfLife extends Application
   private Group world = new Group();
   private Group cameraGroup = new Group();
 
-  private LinearGradient bg;
   private Random random = new Random();
-  private InputHandler inputHandler;
   private Timeline timeline;
 
   private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
@@ -62,6 +58,7 @@ public class TheGameOfLife extends Application
   private Cell[][][] cells = new Cell[32][32][32];
   private Cell[][][] cells2 = new Cell[32][32][32];
   private int numDeadCell = 0;
+  private int r1, r2, r3, r4;
   private boolean isMegaCellClear = true;
 
   HBox getButtonLayout()
@@ -77,6 +74,26 @@ public class TheGameOfLife extends Application
   ComboBox getDropDown()
   {
     return dropDown;
+  }
+
+  ComboBox getR1dropDown()
+  {
+    return r1dropDown;
+  }
+
+  ComboBox getR2dropDown()
+  {
+    return r2dropDown;
+  }
+
+  ComboBox getR3dropDown()
+  {
+    return r3dropDown;
+  }
+
+  ComboBox getR4dropDown()
+  {
+    return r4dropDown;
   }
 
   Button getRotateButton()
@@ -138,7 +155,7 @@ public class TheGameOfLife extends Application
         for (int z = 1; z < 31; z++)
         {
           cells[x][y][z] = new Cell(random.nextBoolean());
-          cells2[x][y][z] = new Cell();
+          cells2[x][y][z] = new Cell(false);
           cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
           cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
           cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
@@ -152,7 +169,7 @@ public class TheGameOfLife extends Application
     }
   }
 
-  void createEmptyCells()
+  void createDeadCells()
   {
     int offset = 58; //used to center "life cube" on the axis
     for (int y = 1; y < 31; y++)
@@ -161,17 +178,27 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
+          cells[x][y][z] = new Cell(false);
+          cells2[x][y][z] = new Cell(false);
+          cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
+          cells[x][y][z].setX(x);
+          cells[x][y][z].setY(y);
+          cells[x][y][z].setZ(z);
 
+          root.getChildren().add(cells[x][y][z]);
         }
       }
     }
   }
 
-  void fillEmptyCells()
+  void randomCellsToLife()
   {
+    isMegaCellClear = false;
     for (int i = 0; i < numDeadCell; i++)
     {
-
+      cells[random.nextInt(30) + 1][random.nextInt(30) + 1][random.nextInt(30) + 1].setAlive();
     }
   }
 
@@ -180,14 +207,12 @@ public class TheGameOfLife extends Application
     numDeadCell = amount;
   }
 
-  void startAutoRotation(Timeline timeline)
+  void setRs(int r1, int r2, int r3, int r4)
   {
-    Rotate rotate = new Rotate(0, 0, 0);
-
-    cameraGroup.getTransforms().add(rotate);
-    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
-    timeline.setCycleCount(Animation.INDEFINITE);
-    rotate.setAxis(Rotate.Y_AXIS);
+    this.r1 = r1;
+    this.r2 = r2;
+    this.r3 = r3;
+    this.r4 = r4;
   }
 
   void startGame(Timeline timeline)
@@ -207,20 +232,41 @@ public class TheGameOfLife extends Application
     camera.setDepthTest(DepthTest.ENABLE);
   }
 
+  private void setEventHandler()
+  {
+    InputHandler inputHandler = new InputHandler(this);
+    subscene.addEventHandler(MouseEvent.ANY, inputHandler);
+    startButton.setOnAction(inputHandler);
+    rotateButton.setOnAction(inputHandler);
+    textField.setOnAction(inputHandler);
+    dropDown.setOnAction(inputHandler);
+    r1dropDown.setOnAction(inputHandler);
+    r2dropDown.setOnAction(inputHandler);
+    r3dropDown.setOnAction(inputHandler);
+    r4dropDown.setOnAction(inputHandler);
+  }
+
   /**
    * sets up stage borders (i.e. UI on top, and 3D model under it)
    */
   private void setupLayout()
   {
-    borderPane = new BorderPane();
-    buttonLayout = new HBox();
-    startButton = new Button("Start");
-    rotateButton = new Button("Rotate: Off");
-    textField = new TextField();
-    dropDownList = FXCollections.observableArrayList("Random Cells", "n Cells Alive", "Preset 1", "Preset 2", "Preset 3");
+    //ComboBoxes
+    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2", "Preset 3");
+    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27);
     dropDown = new ComboBox<>(dropDownList);
-    bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
+    dropDown.setPromptText("Cell Structure");
+    r1dropDown = new ComboBox<>(rNeighbor);
+    r1dropDown.setPromptText("r1");
+    r2dropDown = new ComboBox<>(rNeighbor);
+    r2dropDown.setPromptText("r2");
+    r3dropDown = new ComboBox<>(rNeighbor);
+    r3dropDown.setPromptText("r3");
+    r4dropDown = new ComboBox<>(rNeighbor);
+    r4dropDown.setPromptText("r4");
 
+    //textField
+    textField = new TextField();
     //makes textfield only accept number
     //http://stackoverflow.com/questions/7555564/what-is-the-recommended-way-to-make-a-numeric-textfield-in-javafx
     textField.textProperty().addListener(new ChangeListener<String>()
@@ -234,29 +280,44 @@ public class TheGameOfLife extends Application
         }
       }
     });
+    textField.setPromptText("alive cells [1-10k]");
 
     //buttons
+    buttonLayout = new HBox();
+    startButton = new Button("Start");
+    rotateButton = new Button("Rotate: Off");
     startButton.setPrefSize(100, 20);
     startButton.setDisable(true);
     rotateButton.setPrefSize(100, 20);
     dropDown.setPrefSize(140, 20);
 
     //scene setup
-    scene = new Scene(borderPane, 1080, 800);
+    BorderPane borderPane = new BorderPane();
+    LinearGradient bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
+    scene = new Scene(borderPane, 1080, 742);
     subscene = new SubScene(root, 1080, 700, true, SceneAntialiasing.DISABLED);
     subscene.setFill(Color.DARKVIOLET);
 
     //hbox setup
-    buttonLayout.setPadding(new Insets(15, 12, 15, 12));
-    buttonLayout.setSpacing(10);
-    buttonLayout.getChildren().addAll(startButton, rotateButton, dropDown);
-
+    buttonLayout.setPadding(new Insets(8, 12, 8, 12));
+    buttonLayout.setSpacing(15);
+    buttonLayout.getChildren().addAll(startButton, r1dropDown, r2dropDown, r3dropDown, r4dropDown, rotateButton, dropDown);
     borderPane.setTop(buttonLayout);
     borderPane.setCenter(subscene);
     borderPane.prefHeightProperty().bind(subscene.heightProperty());
     borderPane.prefWidthProperty().bind(subscene.widthProperty());
     root.getChildren().add(world);
     root.setDepthTest(DepthTest.ENABLE);
+  }
+
+  private void startAutoRotation(Timeline timeline)
+  {
+    Rotate rotate = new Rotate(0, 0, 0);
+
+    cameraGroup.getTransforms().add(rotate);
+    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
+    timeline.setCycleCount(Animation.INDEFINITE);
+    rotate.setAxis(Rotate.Y_AXIS);
   }
 
   private Cell[][][] updateCells(Cell[][][] current, Cell[][][] updated)
@@ -283,20 +344,15 @@ public class TheGameOfLife extends Application
   @Override
   public void start(Stage primaryStage)
   {
+
     timeline = new Timeline();
 
     setupLayout();
-    inputHandler = new InputHandler(this);
     buildCamera();
     startGame(timeline);
-
-    subscene.addEventHandler(MouseEvent.ANY, inputHandler);
-    startButton.setOnAction(inputHandler);
-    rotateButton.setOnAction(inputHandler);
-    textField.setOnAction(inputHandler);
-    dropDown.setOnAction(inputHandler);
-
     startAutoRotation(timeline);
+
+    setEventHandler();
 
     primaryStage.setScene(scene);
     primaryStage.setTitle("The Game of Life");

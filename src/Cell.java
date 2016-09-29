@@ -13,35 +13,12 @@ class Cell extends Box
   private float boxSide = 4;
   PhongMaterial color = new PhongMaterial();
 
-  Cell()
-  {
-
-  }
-
   Cell(boolean isAlive)
   {
     this.isAlive = isAlive;
 
-    if (isAlive)
-    {
-      this.setWidth(boxSide * .9);
-      this.setDepth(boxSide * .9);
-      this.setHeight(boxSide * .9);
-      this.setMaterial(color);
-      color.setDiffuseColor(Color.DEEPSKYBLUE);
-      color.setSpecularColor(Color.CADETBLUE);
-    }
-    else
-    {
-      // "*.1 because we want it to be a tenth of the size when dead"
-      this.setWidth(boxSide * .1);
-      this.setDepth(boxSide * .1);
-      this.setHeight(boxSide * .1);
-      this.setMaterial(color);
-      color.setDiffuseColor(Color.FIREBRICK);
-      color.setSpecularColor(Color.CHOCOLATE);
-      this.setOpacity(0);
-    }
+    if (isAlive) setAlive();
+    else setDead();
   }
 
   public int getX()
@@ -84,7 +61,7 @@ class Cell extends Box
     this.z = z;
   }
 
-  void birthOfCell()
+  void setAlive()
   {
     isAlive = true;
     this.setWidth(boxSide * .9);
@@ -95,7 +72,7 @@ class Cell extends Box
     color.setSpecularColor(Color.CADETBLUE);
   }
 
-  void deathOfCell()
+  void setDead()
   {
     // "*.1 because we want it to be a tenth of the size when dead"
     this.setWidth(boxSide * .1);
@@ -104,6 +81,6 @@ class Cell extends Box
     this.setMaterial(color);
     color.setDiffuseColor(Color.FIREBRICK);
     color.setSpecularColor(Color.CHOCOLATE);
-    this.setOpacity(0);
+    this.setOpacity(1);
   }
 }
