@@ -100,14 +100,14 @@ public class InputHandler implements EventHandler
         {
           System.out.println("Clearing Cell Structure");
           game.clearMegaCell();
-
-
           currentSet = selectedSet;
           switch (selectedSet)
           {
             case "Random Cells":
               System.out.println("creating Random Cells");
               game.createRandomCells();
+              game.startGame();
+
               break;
             case "n Cells Alive":
               System.out.println("creating n Random Cells");
@@ -126,13 +126,13 @@ public class InputHandler implements EventHandler
 //            game.createPreset3();
               break;
           }
+          game.startGame();
         }
       }
       else
       {
         startButton.setText("Start");
       }
-      game.startGame();
     }
     else if (source == textField)
     {
