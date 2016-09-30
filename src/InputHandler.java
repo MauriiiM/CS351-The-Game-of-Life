@@ -21,15 +21,15 @@ public class InputHandler implements EventHandler
   private PerspectiveCamera camera;
   private Button startButton;
   private Button rotateButton;
-  private ComboBox dropDown, r1DropDown,r2DropDown,r3DropDown,r4DropDown;
+  private ComboBox dropDown, r1DropDown, r2DropDown, r3DropDown, r4DropDown;
   private TextField textField;
   private Timeline timeline;
 
   private Object source;
-
-
+  
   private String currentSet = "";
   private String selectedSet = "";
+  private int inputAliveCells;
   private int r1 = 0;
   private int r2 = 0;
   private int r3 = 0;
@@ -98,11 +98,9 @@ public class InputHandler implements EventHandler
         startButton.setText("Pause");
         if (!currentSet.equals(selectedSet)) //want to switch to different cell set
         {
-          if (!game.isMegaCellClear())
-          {
-            System.out.println("Clearing Cell Structure");
-            game.clearMegaCell();
-          }
+          System.out.println("Clearing Cell Structure");
+          game.clearMegaCell();
+
 
           currentSet = selectedSet;
           switch (selectedSet)
@@ -113,8 +111,7 @@ public class InputHandler implements EventHandler
               break;
             case "n Cells Alive":
               System.out.println("creating n Random Cells");
-              game.createDeadCells();
-              game.randomCellsToLife();
+              game.randomCellsToLife(inputAliveCells);
               break;
             case "Preset 1":
               System.out.println("creating preset 1");
@@ -140,7 +137,7 @@ public class InputHandler implements EventHandler
     else if (source == textField)
     {
       System.out.println(textField.getText());
-      game.setNumDeadCell(Integer.parseInt(textField.getText()));
+      inputAliveCells = (Integer.parseInt(textField.getText()));
       if (selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
     }
     else if (source == dropDown)
@@ -162,7 +159,7 @@ public class InputHandler implements EventHandler
     else if (source == r2DropDown) r2 = Integer.parseInt(r2DropDown.getValue().toString());
     else if (source == r3DropDown) r3 = Integer.parseInt(r3DropDown.getValue().toString());
     else if (source == r4DropDown) r4 = Integer.parseInt(r4DropDown.getValue().toString());
-    game.setRs(r1,r2,r3,r4);
+    game.setRs(r1, r2, r3, r4);
   }
 
   private void handleKeyEvent(KeyEvent event)

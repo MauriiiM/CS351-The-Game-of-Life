@@ -52,9 +52,8 @@ public class TheGameOfLife extends Application
   private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
   private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
 
-  private Cell[][][] cells = new Cell[32][32][32];
-  private Cell[][][] cells2 = new Cell[32][32][32];
-  private int numDeadCell = 0;
+  private Cell[][][] cell = new Cell[32][32][32];
+  private Cell[][][] cell2 = new Cell[32][32][32];
   private int r1, r2, r3, r4;
   private boolean isMegaCellClear = true;
 
@@ -131,8 +130,8 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
-          root.getChildren().remove(cells[x][y][z]);
-          cells[x][y][z] = null;
+          root.getChildren().remove(cell[x][y][z]);
+          cell[x][y][z] = null;
         }
       }
     }
@@ -152,57 +151,47 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
-          cells[x][y][z] = new Cell(random.nextBoolean());
-          cells2[x][y][z] = new Cell(false);
-          cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setX(x);
-          cells[x][y][z].setY(y);
-          cells[x][y][z].setZ(z);
+          if(random.nextBoolean())
+          {
+            cell[x][y][z] = new Cell();
+            cell2[x][y][z] = null;
+            cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - offset);
+            cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - offset);
+            cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - offset);
+            cell[x][y][z].setX(x);
+            cell[x][y][z].setY(y);
+            cell[x][y][z].setZ(z);
 
-          root.getChildren().add(cells[x][y][z]);
+            root.getChildren().add(cell[x][y][z]);
+          }
+          else cell[x][y][z] = null;
         }
       }
     }
   }
 
-  void createDeadCells()
-  {
-    int offset = 58; //used to center "life cube" on the axis
-    for (int y = 1; y < 31; y++)
-    {
-      for (int x = 1; x < 31; x++)
-      {
-        for (int z = 1; z < 31; z++)
-        {
-          cells[x][y][z] = new Cell(false);
-          cells2[x][y][z] = new Cell(false);
-          cells[x][y][z].setTranslateX(x * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setTranslateY(y * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setTranslateZ(z * cells[x][y][z].getBoxSide() - offset);
-          cells[x][y][z].setX(x);
-          cells[x][y][z].setY(y);
-          cells[x][y][z].setZ(z);
-
-          root.getChildren().add(cells[x][y][z]);
-        }
-      }
-    }
-  }
-
-  void randomCellsToLife()
+  void randomCellsToLife(int aliveCells)
   {
     isMegaCellClear = false;
-    for (int i = 0; i < numDeadCell; i++)
-    {
-      cells[random.nextInt(30) + 1][random.nextInt(30) + 1][random.nextInt(30) + 1].setAlive();
-    }
-  }
+    int offset = 58; //used to center "life cube" on the axis
 
-  void setNumDeadCell(int amount)
-  {
-    numDeadCell = amount;
+    int x, y, z;
+    for (int i = 0; i < aliveCells; i++)
+    {
+      x = random.nextInt(30) + 1;
+      y = random.nextInt(30) + 1;
+      z =random.nextInt(30) + 1;
+      cell[x][y][z] = new Cell();
+
+      cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - offset);
+      cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - offset);
+      cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - offset);
+      cell[x][y][z].setX(x);
+      cell[x][y][z].setY(y);
+      cell[x][y][z].setZ(z);
+
+      root.getChildren().add(cell[x][y][z]);
+    }
   }
 
   void setRs(int r1, int r2, int r3, int r4)
@@ -239,14 +228,13 @@ public class TheGameOfLife extends Application
 
   private void decideLife()
   {
-    int neighboys = 0;
     for (int y = 1; y < 31; y++)
     {
       for (int x = 1; x < 31; x++)
       {
         for (int z = 1; z < 31; z++)
         {
-          if(cells[x][y][z-1].getIsAlive());
+          if(staysAlive(cell[x][y][z])) cell[x][y][z].setDead();
         }
       }
     }
@@ -340,20 +328,32 @@ public class TheGameOfLife extends Application
     rotate.setAxis(Rotate.Y_AXIS);
   }
 
-  private Cell[][][] updateCells(Cell[][][] current, Cell[][][] updated)
+  /**
+   * helper method to check if cell stays alive
+   *
+   * @param current cell for which to check neighbors
+   * @return true if it stays alive
+   */
+  private boolean staysAlive(Cell current)
   {
-    int neighbors = 0;
-    for (int y = 1; y < 31; y++)
+    int aliveNeighbors = 0;
+    int currX = current.getX();
+    int currY = current.getY();
+    int currZ = current.getZ();
+
+    for (int y = -1; y < 2; y++)
     {
-      for (int x = 1; x < 31; x++)
+      for (int x = -1; x < 2; x++)
       {
-        for (int z = 1; z < 31; z++)
+        for (int z = -1; z < 2; z++)
         {
-          if (current[x][y][z] != null) ;
+          if (cell[currX + x][currY + y][currZ + z] == current) continue;
+
+          if (cell[currX + x][currY + y][currZ + z].isAlive()) aliveNeighbors++;
         }
       }
     }
-    return updated;
+      return aliveNeighbors >= r1 && aliveNeighbors <= r2;
   }
 
   public static void main(String[] args)
@@ -364,7 +364,6 @@ public class TheGameOfLife extends Application
   @Override
   public void start(Stage primaryStage)
   {
-
     timeline = new Timeline();
 
     setupLayout();
