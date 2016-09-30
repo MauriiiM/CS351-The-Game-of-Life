@@ -80,9 +80,9 @@ class Cell extends Box
   void setDead()
   {
     // "*.1 because we want it to be a tenth of the size when dead"
-    this.setWidth(boxSide * .1);
-    this.setDepth(boxSide * .1);
-    this.setHeight(boxSide * .1);
+    this.setWidth(0);
+    this.setDepth(0);
+    this.setHeight(0);
     this.setMaterial(color);
     color.setDiffuseColor(Color.FIREBRICK);
     color.setSpecularColor(Color.CHOCOLATE);

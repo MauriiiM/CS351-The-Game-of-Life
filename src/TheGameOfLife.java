@@ -131,6 +131,7 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
+          root.getChildren().remove(cells[x][y][z]);
           cells[x][y][z] = null;
         }
       }
