@@ -27,6 +27,8 @@ import java.util.Random;
  */
 public class TheGameOfLife extends Application
 {
+  private final int OFFSET = 62; //used to center "life cube" on the axis
+
   //GUI
   private HBox buttonLayout;
   private Button startButton;
@@ -144,20 +146,19 @@ public class TheGameOfLife extends Application
   void createRandomCells()
   {
     isMegaCellClear = false;
-    int offset = 58; //used to center "life cube" on the axis
     for (int y = 1; y < 31; y++)
     {
       for (int x = 1; x < 31; x++)
       {
         for (int z = 1; z < 31; z++)
         {
-          if(random.nextBoolean())
+          if (random.nextBoolean())
           {
             cell[x][y][z] = new Cell();
             cell2[x][y][z] = null;
-            cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - offset);
-            cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - offset);
-            cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - offset);
+            cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
+            cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
+            cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
             cell[x][y][z].setX(x);
             cell[x][y][z].setY(y);
             cell[x][y][z].setZ(z);
@@ -170,28 +171,71 @@ public class TheGameOfLife extends Application
     }
   }
 
+  /**
+   * Will create approximately given number of cells to be alive, is not exact as ranom could land on already created cell;
+   *
+   * @param aliveCells cells to be created
+   */
   void randomCellsToLife(int aliveCells)
   {
     isMegaCellClear = false;
-    int offset = 58; //used to center "life cube" on the axis
-
     int x, y, z;
     for (int i = 0; i < aliveCells; i++)
     {
       x = random.nextInt(30) + 1;
       y = random.nextInt(30) + 1;
-      z =random.nextInt(30) + 1;
+      z = random.nextInt(30) + 1;
       cell[x][y][z] = new Cell();
 
-      cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - offset);
-      cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - offset);
-      cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - offset);
+      cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
+      cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
+      cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
       cell[x][y][z].setX(x);
       cell[x][y][z].setY(y);
       cell[x][y][z].setZ(z);
 
       root.getChildren().add(cell[x][y][z]);
     }
+  }
+
+  /**
+   * will create a cell mega structure in a staircase shape
+   */
+  void createPreset1()
+  {
+    int zLim = 31;
+    int xLim = 0;
+    isMegaCellClear = false;
+    for (int y = 30; y > 0; y--)
+    {
+      for (int x = 30; x > xLim; x--)
+      {
+        for (int z = 1; z < zLim; z++)
+        {
+          cell[x][y][z] = new Cell();
+
+          cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
+          cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
+          cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
+          cell[x][y][z].setX(x);
+          cell[x][y][z].setY(y);
+          cell[x][y][z].setZ(z);
+
+          root.getChildren().add(cell[x][y][z]);
+        }
+        zLim--;
+      }
+      xLim++;
+      zLim = (y );
+    }
+  }
+
+  /**
+   *
+   */
+  void createPreset2()
+  {
+
   }
 
   void setRs(int r1, int r2, int r3, int r4)
@@ -220,8 +264,8 @@ public class TheGameOfLife extends Application
     subscene.setCamera(camera);
     cameraGroup.getChildren().add(camera);
     root.getChildren().add(cameraGroup);
-    camera.setFieldOfView(70);
-    camera.setTranslateZ(-200);
+    camera.setFieldOfView(60);
+    camera.setTranslateZ(-220);
     camera.setFarClip(500);
     camera.setDepthTest(DepthTest.ENABLE);
   }
@@ -234,7 +278,7 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
-          if(staysAlive(cell[x][y][z])) cell[x][y][z].setDead();
+          if (staysAlive(cell[x][y][z])) cell[x][y][z].setDead();
         }
       }
     }
@@ -353,7 +397,7 @@ public class TheGameOfLife extends Application
         }
       }
     }
-      return aliveNeighbors >= r1 && aliveNeighbors <= r2;
+    return aliveNeighbors >= r1 && aliveNeighbors <= r2;
   }
 
   public static void main(String[] args)

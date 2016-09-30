@@ -115,7 +115,7 @@ public class InputHandler implements EventHandler
               break;
             case "Preset 1":
               System.out.println("creating preset 1");
-//            game.createPreset1();
+            game.createPreset1();
               break;
             case "Preset 2":
               System.out.println("creating preset 2");
@@ -171,14 +171,13 @@ public class InputHandler implements EventHandler
   {
     if (event.isPrimaryButtonDown())
     {
-      subscene.cursorProperty().setValue(Cursor.CLOSED_HAND);
-
       mouseOldX = event.getSceneX();
       mouseOldY = event.getSceneY();
       System.out.println("mouseX = " + mouseOldX + "\tmouseY = " + mouseOldY);
 
       if (event.getTarget() instanceof Cell)
       {
+        subscene.cursorProperty().setValue(Cursor.CLOSED_HAND);
         System.out.println("IT'S A CELL");
       }
     }
