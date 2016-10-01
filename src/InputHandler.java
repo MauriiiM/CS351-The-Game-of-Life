@@ -12,6 +12,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
+ * Used to handle all action in the Game of Life
+ *
  * @author Mauricio Monsivais
  */
 public class InputHandler implements EventHandler
@@ -26,14 +28,14 @@ public class InputHandler implements EventHandler
   private Timeline timeline;
 
   private Object source;
-  
+
   private String currentSet = "";
   private String selectedSet = "";
   private int inputAliveCells;
   private int r1 = 0;
-  private int r2 = 0;
-  private int r3 = 0;
-  private int r4 = 0;
+  private int r2 = 15;
+  private int r3 = 16;
+  private int r4 = 27;
   double mousePosX;
   double mousePosY;
   double mouseOldX;
@@ -98,6 +100,7 @@ public class InputHandler implements EventHandler
         startButton.setText("Pause");
         if (!currentSet.equals(selectedSet)) //want to switch to different cell set
         {
+          game.setRs(r1, r2, r3, r4); //will set Rs to default if not chosen
           System.out.println("Clearing Cell Structure");
           game.clearMegaCell();
           currentSet = selectedSet;
@@ -110,20 +113,20 @@ public class InputHandler implements EventHandler
 
               break;
             case "n Cells Alive":
-              System.out.println("creating n Random Cells");
+              System.out.println("creating " + inputAliveCells + " alive cells");
               game.randomCellsToLife(inputAliveCells);
               break;
             case "Preset 1":
               System.out.println("creating preset 1");
-            game.createPreset1();
+              game.createPreset1();
               break;
             case "Preset 2":
               System.out.println("creating preset 2");
-//            game.createPreset2();
+              game.createPreset2();
               break;
             case "Preset 3":
               System.out.println("creating preset 3");
-//            game.createPreset3();
+              game.createPreset3();
               break;
           }
           game.startGame();
@@ -155,11 +158,10 @@ public class InputHandler implements EventHandler
         game.getButtonLayout().getChildren().remove(textField);
       }
     }
-    else if (source == r1DropDown) r1 = Integer.parseInt(r1DropDown.getValue().toString());
-    else if (source == r2DropDown) r2 = Integer.parseInt(r2DropDown.getValue().toString());
-    else if (source == r3DropDown) r3 = Integer.parseInt(r3DropDown.getValue().toString());
-    else if (source == r4DropDown) r4 = Integer.parseInt(r4DropDown.getValue().toString());
-    game.setRs(r1, r2, r3, r4);
+    else if (source == r1DropDown) game.setR1(r1 = Integer.parseInt(r1DropDown.getValue().toString()));
+    else if (source == r2DropDown) game.setR2(r2 = Integer.parseInt(r2DropDown.getValue().toString()));
+    else if (source == r3DropDown) game.setR3(r3 = Integer.parseInt(r3DropDown.getValue().toString()));
+    else if (source == r4DropDown) game.setR4(r4 = Integer.parseInt(r4DropDown.getValue().toString()));
   }
 
   private void handleKeyEvent(KeyEvent event)
@@ -171,6 +173,7 @@ public class InputHandler implements EventHandler
   {
     if (event.isPrimaryButtonDown())
     {
+      event.setDragDetect(true);
       mouseOldX = event.getSceneX();
       mouseOldY = event.getSceneY();
       System.out.println("mouseX = " + mouseOldX + "\tmouseY = " + mouseOldY);
@@ -178,11 +181,11 @@ public class InputHandler implements EventHandler
       if (event.getTarget() instanceof Cell)
       {
         subscene.cursorProperty().setValue(Cursor.CLOSED_HAND);
-        System.out.println("IT'S A CELL");
       }
     }
     else if (!event.isPrimaryButtonDown())
     {
+
       subscene.cursorProperty().setValue(Cursor.DEFAULT);
     }
   }

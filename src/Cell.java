@@ -3,6 +3,7 @@ import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 
 /**
+ * A cell which extends JavaFX box
  * @author Mauricio Monsivais
  */
 class Cell extends Box
@@ -16,16 +17,6 @@ class Cell extends Box
   Cell()
   {
     setAlive();
-  }
-
-  boolean isAlive()
-  {
-    return isAlive;
-  }
-
-  int getX()
-  {
-    return x;
   }
 
   float getBoxSize()
@@ -43,19 +34,9 @@ class Cell extends Box
     this.x = x;
   }
 
-  int getY()
-  {
-    return y;
-  }
-
   void setY(int y)
   {
     this.y = y;
-  }
-
-  int getZ()
-  {
-    return z;
   }
 
   void setZ(int z)
@@ -63,27 +44,36 @@ class Cell extends Box
     this.z = z;
   }
 
+  /**
+   * will set color to blue and size to 95% of 4
+   */
   void setAlive()
   {
     isAlive = true;
-    this.setWidth(boxSize * .9);
-    this.setDepth(boxSize * .9);
-    this.setHeight(boxSize * .9);
+    this.setWidth(boxSize * .95);
+    this.setDepth(boxSize * .95);
+    this.setHeight(boxSize * .95);
     this.setMaterial(color);
     color.setDiffuseColor(Color.DEEPSKYBLUE);
     color.setSpecularColor(Color.CADETBLUE);
   }
 
-  void setDead()
+  /**
+   * Used to set color while dying or being born
+   * @param isAlive true if being born (blue), false if dying (red)
+   */
+  void setColor(boolean isAlive)
   {
-    isAlive = false;
-    // "*.1 because we want it to be a tenth of the size when dead"
-//    this.setWidth(0);
-//    this.setDepth(0);
-//    this.setHeight(0);
-//    this.setMaterial(color);
-//    color.setDiffuseColor(Color.FIREBRICK);
-//    color.setSpecularColor(Color.CHOCOLATE);
-//    this.setOpacity(1);
+    if (isAlive)
+    {
+      color.setDiffuseColor(Color.DEEPSKYBLUE);
+      color.setSpecularColor(Color.CADETBLUE);
+    }
+    else
+    {
+      color.setDiffuseColor(Color.FIREBRICK);
+      color.setSpecularColor(Color.CHOCOLATE);
+    }
+    this.setMaterial(color);
   }
 }

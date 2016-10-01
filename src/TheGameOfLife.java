@@ -58,7 +58,7 @@ public class TheGameOfLife extends Application
   private boolean[][][] cellFuture = new boolean[32][32][32];
   private int r1, r2, r3, r4;
   private boolean isMegaCellClear = true;
-  int count = 0;
+  private int frame = 60;
 
   HBox getButtonLayout()
   {
@@ -120,11 +120,6 @@ public class TheGameOfLife extends Application
     return timeline;
   }
 
-  boolean isMegaCellClear()
-  {
-    return isMegaCellClear;
-  }
-
   void clearMegaCell()
   {
     for (int y = 1; y < 31; y++)
@@ -154,22 +149,8 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
-          if (random.nextBoolean())
-          {
-            cell[x][y][z] = new Cell();
-            cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
-            cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
-            cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
-            cell[x][y][z].setX(x);
-            cell[x][y][z].setY(y);
-            cell[x][y][z].setZ(z);
-
-            root.getChildren().add(cell[x][y][z]);
-          }
-          else
-          {
-            cell[x][y][z] = null;
-          }
+          if (random.nextBoolean()) addNewCell(x, y, z);
+          else cell[x][y][z] = null;
         }
       }
     }
@@ -216,16 +197,7 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < zLim; z++)
         {
-          cell[x][y][z] = new Cell();
-
-          cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
-          cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
-          cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
-          cell[x][y][z].setX(x);
-          cell[x][y][z].setY(y);
-          cell[x][y][z].setZ(z);
-
-          root.getChildren().add(cell[x][y][z]);
+          addNewCell(x, y, z);
         }
         zLim--;
       }
@@ -242,6 +214,34 @@ public class TheGameOfLife extends Application
 
   }
 
+  /**
+   *
+   */
+  void createPreset3()
+  {
+
+  }
+
+  void setR1(int r1)
+  {
+    this.r1 = r1;
+  }
+
+  void setR2(int r2)
+  {
+    this.r2 = r2;
+  }
+
+  void setR3(int r3)
+  {
+    this.r3 = r3;
+  }
+
+  void setR4(int r4)
+  {
+    this.r4 = r4;
+  }
+
   void setRs(int r1, int r2, int r3, int r4)
   {
     this.r1 = r1;
@@ -250,31 +250,95 @@ public class TheGameOfLife extends Application
     this.r4 = r4;
   }
 
+  /**
+   * has the actual animation loop which will check neighbors of each cell and check whether it should live/die
+   */
   void startGame()
   {
     Transition timer = new Transition()
     {
       {
-        setCycleDuration(Duration.millis(1000));
+        setCycleDuration(Duration.INDEFINITE);
       }
 
       @Override
       protected void interpolate(double frac)
       {
-        count++;
-
-        if (count == 60)
+        if (frame == 60)
         {
-          System.out.println("HERE");
-
+          clearBooleanCells();
           decideLife();
-          count = 0;
+          frame = 0;
         }
+        frame++;
+        animateLife(frame);
       }
     };
     timer.play();
   }
 
+  /**
+   * create a new cell in 3D coordinates from given position and will draw it
+   *
+   * @param x x-coordinate in 3D structure
+   * @param y y-coordinate in 3D structure
+   * @param z z-coordinate in 3D structure
+   */
+  private void addNewCell(int x, int y, int z)
+  {
+    cell[x][y][z] = new Cell();
+
+    cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
+    cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
+    cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
+    cell[x][y][z].setX(x);
+    cell[x][y][z].setY(y);
+    cell[x][y][z].setZ(z);
+
+    root.getChildren().add(cell[x][y][z]);
+  }
+
+  /**
+   * will create/kill cell when time and does animation
+   *
+   * @param frame current frame from fps
+   */
+  private void animateLife(int frame)
+  {
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+          //case to see if it should be a new cell
+          if (cellFuture[x][y][z] && cell[x][y][z] == null)
+          {
+            if (frame == 1)
+            {
+              addNewCell(x, y, z);
+            }
+            cell[x][y][z].setBoxSize(frame / 60);
+          }
+          else if (!cellFuture[x][y][z] && cell[x][y][z] != null)
+          {
+            float size = cell[x][y][z].getBoxSize();
+            cell[x][y][z].setColor(false);
+            cell[x][y][z].setBoxSize(size / frame);
+            if (frame == 59)
+            {
+              root.getChildren().remove(cell[x][y][z]);
+              cell[x][y][z] = null;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * builds camera 220 away and a FOV of 60 degrees
+   */
   private void buildCamera()
   {
     camera = new PerspectiveCamera(true);
@@ -287,34 +351,26 @@ public class TheGameOfLife extends Application
     camera.setDepthTest(DepthTest.ENABLE);
   }
 
-  private void animateLife(int frame)
+  /**
+   * will set all of cellFuture 3D boolean array to false
+   */
+  private void clearBooleanCells()
   {
-    int boxSize = 0;
     for (int y = 1; y < 31; y++)
     {
       for (int x = 1; x < 31; x++)
       {
         for (int z = 1; z < 31; z++)
         {
-
-          if (cell[x][y][z] == null && !cellFuture[x][y][z])
-          {
-//            root.getChildren().remove(cell[x][y][z]);
-            cell[x][y][z].setBoxSize(4);
-          }
-          else if (cellFuture[x][y][z])
-          {
-            cellFuture[x][y][z] = false;
-          }
-          else
-          {
-            cell[x][y][z].setDead();
-          }
+          cellFuture[x][y][z] = false;
         }
       }
     }
   }
 
+  /**
+   * iterates through entire 3D array checking each cell calling decideCellLife
+   */
   private void decideLife()
   {
     for (int y = 1; y < 31; y++)
@@ -323,22 +379,40 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
-          if (cell[x][y][z] != null)
-          {
-            if (staysAlive(cell[x][y][z]))
-            {
-              cellFuture[x][y][z] = true;
-            }
-            else
-            {
-              cell[x][y][z].setDead();
-            }
-          }
+          decideCellLife(x, y, z);
         }
       }
     }
   }
 
+  /**
+   * helper method to check if cell stays alive by checking all 26 neighbors
+   *
+   * @param currX current cell x
+   * @param currY current cell y
+   * @param currZ current cell z
+   */
+  private void decideCellLife(int currX, int currY, int currZ)
+  {
+    int aliveNeighbors = 0;
+    for (int y = -1; y < 2; y++)
+    {
+      for (int x = -1; x < 2; x++)
+      {
+        for (int z = -1; z < 2; z++)
+        {
+          if (x == 0 && y == 0 && z == 0) continue;
+
+          if (cell[currX + x][currY + y][currZ + z] != null) aliveNeighbors++;
+        }
+      }
+    }
+    if (aliveNeighbors >= r1 && aliveNeighbors <= r2) cellFuture[currX][currY][currZ] = true;
+  }
+
+  /**
+   * sets InputHandler to be called on any action in GUI
+   */
   private void setEventHandler()
   {
     InputHandler inputHandler = new InputHandler(this);
@@ -354,13 +428,13 @@ public class TheGameOfLife extends Application
   }
 
   /**
-   * sets up stage borders (i.e. UI on top, and 3D model under it)
+   * sets up stage GUI (i.e. UI on top, and 3D model under it)
    */
   private void setupLayout()
   {
     //ComboBoxes
     ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2", "Preset 3");
-    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
+    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     dropDown = new ComboBox<>(dropDownList);
     dropDown.setPromptText("Cell Structure");
     r1dropDown = new ComboBox<>(rNeighbor);
@@ -417,6 +491,11 @@ public class TheGameOfLife extends Application
     root.setDepthTest(DepthTest.ENABLE);
   }
 
+  /**
+   * Called to rotate cells about the Y axis
+   *
+   * @param timeline timeline object
+   */
   private void startAutoRotation(Timeline timeline)
   {
     Rotate rotate = new Rotate(0, 0, 0);
@@ -425,34 +504,6 @@ public class TheGameOfLife extends Application
     timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
     timeline.setCycleCount(Animation.INDEFINITE);
     rotate.setAxis(Rotate.Y_AXIS);
-  }
-
-  /**
-   * helper method to check if cell stays alive
-   *
-   * @param current cell for which to check neighbors
-   * @return true if it stays alive
-   */
-  private boolean staysAlive(Cell current)
-  {
-    int aliveNeighbors = 0;
-    int currX = current.getX();
-    int currY = current.getY();
-    int currZ = current.getZ();
-
-    for (int y = -1; y < 2; y++)
-    {
-      for (int x = -1; x < 2; x++)
-      {
-        for (int z = -1; z < 2; z++)
-        {
-          if (cell[currX + x][currY + y][currZ + z] == current) continue;
-
-          if (cell[currX + x][currY + y][currZ + z].isAlive()) aliveNeighbors++;
-        }
-      }
-    }
-    return aliveNeighbors >= r1 && aliveNeighbors <= r2;
   }
 
   public static void main(String[] args)
