@@ -207,19 +207,40 @@ public class TheGameOfLife extends Application
   }
 
   /**
-   *
+   *life structure outline
    */
   void createPreset2()
   {
+    for(int i = 1; i < 30; i++)
+    {
+      addNewCell(i, 1, 1);
+      addNewCell(i, 1, 30);
+      addNewCell(i, 30, 1);
+      addNewCell(i, 30, 30);
 
+      addNewCell(1, i, 1);
+      addNewCell(1, i, 30);
+      addNewCell(30, i, 30);
+      addNewCell(30, i, 1);
+
+      addNewCell(1, 1, i);
+      addNewCell(1, 30, i);
+      addNewCell(30, 1, i);
+      addNewCell(30, 30, i);
+    }
   }
 
   /**
-   *
+   * small cube with missing corner
    */
   void createPreset3()
   {
-
+    addNewCell(14, 14, 14);
+    addNewCell(15, 14, 14);
+    addNewCell(14, 15, 14);
+    addNewCell(14, 14, 15);
+    addNewCell(15, 14, 15);
+    addNewCell(14, 15, 15);
   }
 
   void setR1(int r1)

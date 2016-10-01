@@ -21,3 +21,14 @@
 >>Controls
   Mouse: drag up/down to zoom in/out
   Mouse: grab cell and move sideways to rotate Life structure
+  
+>>Presets
+  n Random cells (type in a number and press enter)
+  Random (will create a completely random 3D structure)
+  1) a stairway
+  2) 3D structure outline
+  3) a small box without corner (to observe patterns)
+  
+>>Known Bugs
+  - game can't be paused (camera rotation can be)
+  - 

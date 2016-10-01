@@ -85,12 +85,12 @@ public class InputHandler implements EventHandler
       if (rotateButton.getText().equals("Rotate: Off"))
       {
         rotateButton.setText("Rotate: On");
-        timeline.pause();
+        timeline.play();
       }
       else
       {
         rotateButton.setText("Rotate: Off");
-        timeline.play();
+        timeline.pause();
       }
     }
     else if (source == startButton)
@@ -101,34 +101,8 @@ public class InputHandler implements EventHandler
         if (!currentSet.equals(selectedSet)) //want to switch to different cell set
         {
           game.setRs(r1, r2, r3, r4); //will set Rs to default if not chosen
-          System.out.println("Clearing Cell Structure");
-          game.clearMegaCell();
           currentSet = selectedSet;
-          switch (selectedSet)
-          {
-            case "Random Cells":
-              System.out.println("creating Random Cells");
-              game.createRandomCells();
-              game.startGame();
 
-              break;
-            case "n Cells Alive":
-              System.out.println("creating " + inputAliveCells + " alive cells");
-              game.randomCellsToLife(inputAliveCells);
-              break;
-            case "Preset 1":
-              System.out.println("creating preset 1");
-              game.createPreset1();
-              break;
-            case "Preset 2":
-              System.out.println("creating preset 2");
-              game.createPreset2();
-              break;
-            case "Preset 3":
-              System.out.println("creating preset 3");
-              game.createPreset3();
-              break;
-          }
           game.startGame();
         }
       }
@@ -141,7 +115,14 @@ public class InputHandler implements EventHandler
     {
       System.out.println(textField.getText());
       inputAliveCells = (Integer.parseInt(textField.getText()));
-      if (selectedSet.equals("n Cells Alive")) startButton.setDisable(false);
+      if (selectedSet.equals("n Cells Alive"))
+      {
+        System.out.println("Clearing Cell Structure");
+        game.clearMegaCell();
+        System.out.println("creating " + inputAliveCells + " alive cells");
+        game.randomCellsToLife(inputAliveCells);
+        startButton.setDisable(false);
+      }
     }
     else if (source == dropDown)
     {
@@ -156,6 +137,33 @@ public class InputHandler implements EventHandler
       {
         startButton.setDisable(false);
         game.getButtonLayout().getChildren().remove(textField);
+      }
+      switch (selectedSet)
+      {
+        case "Random Cells":
+          System.out.println("Clearing Cell Structure");
+          game.clearMegaCell();
+          System.out.println("creating Random Cells");
+          game.createRandomCells();
+          break;
+        case "Preset 1":
+          System.out.println("Clearing Cell Structure");
+          game.clearMegaCell();
+          System.out.println("creating preset 1");
+          game.createPreset1();
+          break;
+        case "Preset 2":
+          System.out.println("Clearing Cell Structure");
+          game.clearMegaCell();
+          System.out.println("creating preset 2");
+          game.createPreset2();
+          break;
+        case "Preset 3":
+          System.out.println("Clearing Cell Structure");
+          game.clearMegaCell();
+          System.out.println("creating preset 3");
+          game.createPreset3();
+          break;
       }
     }
     else if (source == r1DropDown) game.setR1(r1 = Integer.parseInt(r1DropDown.getValue().toString()));
