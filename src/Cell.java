@@ -16,8 +16,9 @@ class Cell extends Box
 
   Cell()
   {
-    setAlive();
+    setDead();
   }
+
 
   float getBoxSize()
   {
@@ -44,6 +45,11 @@ class Cell extends Box
     this.z = z;
   }
 
+  boolean  isAlive()
+  {
+    return isAlive;
+  }
+
   /**
    * will set color to blue and size to 95% of 4
    */
@@ -56,6 +62,20 @@ class Cell extends Box
     this.setMaterial(color);
     color.setDiffuseColor(Color.DEEPSKYBLUE);
     color.setSpecularColor(Color.CADETBLUE);
+  }
+
+  /**
+   *
+   */
+  void setDead()
+  {
+    isAlive = false;
+    this.setWidth(0);
+    this.setDepth(0);
+    this.setHeight(0);
+    this.setMaterial(color);
+    color.setDiffuseColor(Color.FIREBRICK);
+    color.setSpecularColor(Color.CHOCOLATE);
   }
 
   /**

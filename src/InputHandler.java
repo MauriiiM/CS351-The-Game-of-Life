@@ -32,10 +32,10 @@ public class InputHandler implements EventHandler
   private String currentSet = "";
   private String selectedSet = "";
   private int inputAliveCells;
-  private int r1 = 0;
-  private int r2 = 15;
-  private int r3 = 16;
-  private int r4 = 27;
+  private int r1 = 3;
+  private int r2 = 6;
+  private int r3 = 6;
+  private int r4 = 3;
   double mousePosX;
   double mousePosY;
   double mouseOldX;

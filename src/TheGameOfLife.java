@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -55,7 +56,7 @@ public class TheGameOfLife extends Application
   private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
 
   private Cell[][][] cell = new Cell[32][32][32];
-  private boolean[][][] cellFuture = new boolean[32][32][32];
+  private boolean[][][] shoudBeAlive = new boolean[32][32][32];
   private int r1, r2, r3, r4;
   private boolean isMegaCellClear = true;
   private int frame = 60;
@@ -128,9 +129,8 @@ public class TheGameOfLife extends Application
       {
         for (int z = 0; z < 31; z++)
         {
-          root.getChildren().remove(cell[x][y][z]);
-          cell[x][y][z] = null;
-          cellFuture[x][y][z] = false;
+          cell[x][y][z].setDead();
+          shoudBeAlive[x][y][z] = false;
         }
       }
     }
@@ -149,8 +149,14 @@ public class TheGameOfLife extends Application
       {
         for (int z = 1; z < 31; z++)
         {
-          if (random.nextBoolean()) addNewCell(x, y, z);
-          else cell[x][y][z] = null;
+          if (random.nextBoolean())
+          {
+            addNewCell(x, y, z);
+          }
+          else
+          {
+            cell[x][y][z].setDead();
+          }
         }
       }
     }
@@ -170,7 +176,7 @@ public class TheGameOfLife extends Application
       x = random.nextInt(30) + 1;
       y = random.nextInt(30) + 1;
       z = random.nextInt(30) + 1;
-      cell[x][y][z] = new Cell();
+      cell[x][y][z].setAlive();
 
       cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
       cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
@@ -178,8 +184,6 @@ public class TheGameOfLife extends Application
       cell[x][y][z].setX(x);
       cell[x][y][z].setY(y);
       cell[x][y][z].setZ(z);
-
-      root.getChildren().add(cell[x][y][z]);
     }
   }
 
@@ -207,11 +211,11 @@ public class TheGameOfLife extends Application
   }
 
   /**
-   *life structure outline
+   * life structure outline
    */
   void createPreset2()
   {
-    for(int i = 1; i < 31; i++)
+    for (int i = 1; i < 31; i++)
     {
       addNewCell(i, 1, 1);
       addNewCell(i, 1, 30);
@@ -287,7 +291,6 @@ public class TheGameOfLife extends Application
       {
         if (frame == 60)
         {
-          clearBooleanCells();
           decideLife();
           frame = 0;
         }
@@ -307,16 +310,9 @@ public class TheGameOfLife extends Application
    */
   private void addNewCell(int x, int y, int z)
   {
-    cell[x][y][z] = new Cell();
+    cell[x][y][z].setAlive();
+    shoudBeAlive[x][y][z] = true;
 
-    cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
-    cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
-    cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
-    cell[x][y][z].setX(x);
-    cell[x][y][z].setY(y);
-    cell[x][y][z].setZ(z);
-
-    root.getChildren().add(cell[x][y][z]);
   }
 
   /**
@@ -333,24 +329,20 @@ public class TheGameOfLife extends Application
         for (int z = 1; z < 31; z++)
         {
           //case to see if it should be a new cell
-          if (cellFuture[x][y][z] && cell[x][y][z] == null)
+          if (shoudBeAlive[x][y][z] && !cell[x][y][z].isAlive())
           {
-            if (frame == 1)
-            {
-              addNewCell(x, y, z);
-            }
-            cell[x][y][z].setBoxSize(frame / 60);
-          }
-          else if (!cellFuture[x][y][z] && cell[x][y][z] != null)
-          {
-            float size = cell[x][y][z].getBoxSize();
             cell[x][y][z].setColor(false);
-            cell[x][y][z].setBoxSize(size / frame);
-            if (frame == 59)
-            {
-              root.getChildren().remove(cell[x][y][z]);
-              cell[x][y][z] = null;
-            }
+            cell[x][y][z].setBoxSize(4 * frame / 59);
+            if (cell[x][y][z].getBoxSize() == 4) cell[x][y][z].setAlive();
+
+          }
+          else if (!shoudBeAlive[x][y][z] && cell[x][y][z].isAlive())
+          {
+            System.out.println("HHHHHHH");
+            cell[x][y][z].setColor(true);
+            cell[x][y][z].setBoxSize(4 - (4 * frame / 59));
+
+            if (cell[x][y][z].getBoxSize() == 0) cell[x][y][z].setDead();
           }
         }
       }
@@ -372,18 +364,23 @@ public class TheGameOfLife extends Application
     camera.setDepthTest(DepthTest.ENABLE);
   }
 
-  /**
-   * will set all of cellFuture 3D boolean array to false
-   */
-  private void clearBooleanCells()
+  private void createLife()
   {
-    for (int y = 1; y < 31; y++)
+    for (int y = 0; y < 32; y++)
     {
-      for (int x = 1; x < 31; x++)
+      for (int x = 0; x < 32; x++)
       {
-        for (int z = 1; z < 31; z++)
+        for (int z = 0; z < 32; z++)
         {
-          cellFuture[x][y][z] = false;
+          cell[x][y][z] = new Cell();
+
+          cell[x][y][z].setTranslateX(x * cell[x][y][z].getBoxSize() - OFFSET);
+          cell[x][y][z].setTranslateY(y * cell[x][y][z].getBoxSize() - OFFSET);
+          cell[x][y][z].setTranslateZ(z * cell[x][y][z].getBoxSize() - OFFSET);
+          cell[x][y][z].setX(x);
+          cell[x][y][z].setY(y);
+          cell[x][y][z].setZ(z);
+          root.getChildren().add(cell[x][y][z]);
         }
       }
     }
@@ -394,6 +391,7 @@ public class TheGameOfLife extends Application
    */
   private void decideLife()
   {
+    transferLife();
     for (int y = 1; y < 31; y++)
     {
       for (int x = 1; x < 31; x++)
@@ -424,11 +422,15 @@ public class TheGameOfLife extends Application
         {
           if (x == 0 && y == 0 && z == 0) continue;
 
-          if (cell[currX + x][currY + y][currZ + z] != null) aliveNeighbors++;
+          if (cell[currX + x][currY + y][currZ + z].isAlive()) aliveNeighbors++;
         }
       }
     }
-    if (aliveNeighbors >= r1 && aliveNeighbors <= r2) cellFuture[currX][currY][currZ] = true;
+    if (aliveNeighbors >= r1 && aliveNeighbors <= r2)
+    {
+      shoudBeAlive[currX][currY][currZ] = true;
+    }
+    else if (aliveNeighbors > r3 || aliveNeighbors < r4) shoudBeAlive[currX][currY][currZ] = false;
   }
 
   /**
@@ -527,6 +529,27 @@ public class TheGameOfLife extends Application
     rotate.setAxis(Rotate.Y_AXIS);
   }
 
+  private void transferLife()
+  {
+    for (int y = 1; y < 31; y++)
+    {
+      for (int x = 1; x < 31; x++)
+      {
+        for (int z = 1; z < 31; z++)
+        {
+          if (shoudBeAlive[x][y][z])
+          {
+            cell[x][y][z].setAlive();
+          }
+          else
+          {
+            cell[x][y][z].setDead();
+          }
+        }
+      }
+    }
+  }
+
   public static void main(String[] args)
   {
     launch(args);
@@ -536,6 +559,8 @@ public class TheGameOfLife extends Application
   public void start(Stage primaryStage)
   {
     timeline = new Timeline();
+
+    createLife();
 
     setupLayout();
     buildCamera();
