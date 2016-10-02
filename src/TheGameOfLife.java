@@ -122,11 +122,11 @@ public class TheGameOfLife extends Application
 
   void clearMegaCell()
   {
-    for (int y = 1; y < 31; y++)
+    for (int y = 0; y < 31; y++)
     {
-      for (int x = 1; x < 31; x++)
+      for (int x = 0; x < 31; x++)
       {
-        for (int z = 1; z < 31; z++)
+        for (int z = 0; z < 31; z++)
         {
           root.getChildren().remove(cell[x][y][z]);
           cell[x][y][z] = null;
@@ -211,7 +211,7 @@ public class TheGameOfLife extends Application
    */
   void createPreset2()
   {
-    for(int i = 1; i < 30; i++)
+    for(int i = 1; i < 31; i++)
     {
       addNewCell(i, 1, 1);
       addNewCell(i, 1, 30);
