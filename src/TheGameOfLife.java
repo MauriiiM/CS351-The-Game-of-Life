@@ -54,6 +54,7 @@ public class TheGameOfLife extends Application
 
   private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
   private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
+  private double camDistance = -220;
 
   private Cell[][][] cell = new Cell[32][32][32];
   private boolean[][][] shoudBeAlive = new boolean[32][32][32];
@@ -358,9 +359,19 @@ public class TheGameOfLife extends Application
     cameraGroup.getChildren().add(camera);
     root.getChildren().add(cameraGroup);
     camera.setFieldOfView(60);
-    camera.setTranslateZ(-220);
+    camera.setTranslateZ(camDistance);
     camera.setFarClip(500);
     camera.setDepthTest(DepthTest.ENABLE);
+  }
+
+  private void handleZoom()
+  {
+    scene.setOnScroll(event ->
+    {
+      if (event.getDeltaY() < 0) camDistance *= 1.01;
+      else camDistance *= .99;
+      camera.setTranslateZ(camDistance);
+    });
   }
 
   private void createLife()
@@ -447,6 +458,7 @@ public class TheGameOfLife extends Application
     r2dropDown.setOnAction(inputHandler);
     r3dropDown.setOnAction(inputHandler);
     r4dropDown.setOnAction(inputHandler);
+    handleZoom();
   }
 
   /**

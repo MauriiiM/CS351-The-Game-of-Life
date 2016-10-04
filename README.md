@@ -19,7 +19,7 @@
    2) A cube will die if the number of neighbors is more than r3 or less than r4.
    
 >>Controls
-  Mouse: drag up/down to zoom in/out
+  Mouse: scroll up/down to zoom in/out
   Mouse: grab cell and move sideways to rotate Life structure
   
 >>Presets
