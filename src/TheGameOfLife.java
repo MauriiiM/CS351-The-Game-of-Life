@@ -331,15 +331,14 @@ public class TheGameOfLife extends Application
           //case to see if it should be a new cell
           if (shoudBeAlive[x][y][z] && !cell[x][y][z].isAlive())
           {
-            cell[x][y][z].setColor(false);
+            cell[x][y][z].setColor(true);
             cell[x][y][z].setBoxSize(4 * frame / 59);
             if (cell[x][y][z].getBoxSize() == 4) cell[x][y][z].setAlive();
 
           }
           else if (!shoudBeAlive[x][y][z] && cell[x][y][z].isAlive())
           {
-            System.out.println("HHHHHHH");
-            cell[x][y][z].setColor(true);
+            cell[x][y][z].setColor(false);
             cell[x][y][z].setBoxSize(4 - (4 * frame / 59));
 
             if (cell[x][y][z].getBoxSize() == 0) cell[x][y][z].setDead();
