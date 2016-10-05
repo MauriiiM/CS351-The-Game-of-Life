@@ -248,6 +248,13 @@ public class TheGameOfLife extends Application
     addNewCell(14, 15, 15);
   }
 
+  void createPreset4()
+  {
+    addNewCell(15, 15, 14);
+    addNewCell(15, 15, 15);
+    addNewCell(15, 15, 16);
+  }
+
   void setR1(int r1)
   {
     this.r1 = r1;
@@ -467,18 +474,19 @@ public class TheGameOfLife extends Application
   private void setupLayout()
   {
     //ComboBoxes
-    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2", "Preset 3");
+    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2",
+            "Preset 3", "Preset 4");
     ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     dropDown = new ComboBox<>(dropDownList);
     dropDown.setPromptText("Cell Structure");
     r1dropDown = new ComboBox<>(rNeighbor);
-    r1dropDown.setPromptText("r1");
+    r1dropDown.setPromptText("r1=" + r1);
     r2dropDown = new ComboBox<>(rNeighbor);
-    r2dropDown.setPromptText("r2");
+    r2dropDown.setPromptText("r2=" + r2);
     r3dropDown = new ComboBox<>(rNeighbor);
-    r3dropDown.setPromptText("r3");
+    r3dropDown.setPromptText("r3=" + r3);
     r4dropDown = new ComboBox<>(rNeighbor);
-    r4dropDown.setPromptText("r4");
+    r4dropDown.setPromptText("r4=" + r4);
 
     //textField
     textField = new TextField();

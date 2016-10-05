@@ -164,6 +164,12 @@ public class InputHandler implements EventHandler
           System.out.println("creating preset 3");
           game.createPreset3();
           break;
+        case "Preset 4":
+          System.out.println("Clearing Cell Structure");
+          game.clearMegaCell();
+          System.out.println("creating preset 4");
+          game.createPreset4();
+          break;
       }
     }
     else if (source == r1DropDown) game.setR1(r1 = Integer.parseInt(r1DropDown.getValue().toString()));
