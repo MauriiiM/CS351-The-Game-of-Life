@@ -1,3 +1,4 @@
+import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.*;
 import javafx.application.Application;
@@ -365,6 +366,9 @@ public class TheGameOfLife extends Application
     subscene.setCamera(camera);
     cameraGroup.getChildren().add(camera);
     root.getChildren().add(cameraGroup);
+    camera.setTranslateY(-140);
+    camera.setRotationAxis(Rotate.X_AXIS);
+    camera.setRotate(-35);
     camera.setFieldOfView(60);
     camera.setTranslateZ(camDistance);
     camera.setFarClip(500);
