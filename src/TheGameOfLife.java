@@ -197,6 +197,8 @@ public class TheGameOfLife extends Application
     int zLim = 31;
     int xLim = 0;
     isMegaCellClear = false;
+    setRPreset();
+
     for (int y = 30; y > 0; y--)
     {
       for (int x = 30; x > xLim; x--)
@@ -251,6 +253,11 @@ public class TheGameOfLife extends Application
 
   void createPreset4()
   {
+    r1 = 1;
+    r2 = 3;
+    r3 = 1;
+    r4 = 4;
+    setRPreset();
     addNewCell(15, 15, 14);
     addNewCell(15, 15, 15);
     addNewCell(15, 15, 16);
@@ -301,10 +308,11 @@ public class TheGameOfLife extends Application
         if (frame == 60)
         {
           decideLife();
+
+        animateLife(frame);
           frame = 0;
         }
         frame++;
-        animateLife(frame);
       }
     };
     timer.play();
@@ -340,6 +348,13 @@ public class TheGameOfLife extends Application
           //case to see if it should be a new cell
           if (shoudBeAlive[x][y][z] && !cell[x][y][z].isAlive())
           {
+//            ScaleTransition st = new ScaleTransition(Duration.millis(1000), cell[x][y][z]);
+//            st.setByX(1.5);
+//            st.setByY(1.5f);
+//            st.setByZ(1.5);
+//            st.setAutoReverse(true);
+//
+//            st.play();
             cell[x][y][z].setColor(true);
             cell[x][y][z].setBoxSize(4 * frame / 59);
             if (cell[x][y][z].getBoxSize() == 4) cell[x][y][z].setAlive();
@@ -472,14 +487,21 @@ public class TheGameOfLife extends Application
     handleZoom();
   }
 
+  private void setRPreset()
+  {
+    r1dropDown.setPromptText("r1 = " + r1);
+    r2dropDown.setPromptText("r2 = " + r2);
+    r3dropDown.setPromptText("r3 = " + r3);
+    r4dropDown.setPromptText("r4 = " + r4);
+  }
+
   /**
    * sets up stage GUI (i.e. UI on top, and 3D model under it)
    */
   private void setupLayout()
   {
     //ComboBoxes
-    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2",
-            "Preset 3", "Preset 4");
+    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2", "Preset 3", "Preset 4");
     ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     dropDown = new ComboBox<>(dropDownList);
     dropDown.setPromptText("Cell Structure");

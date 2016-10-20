@@ -31,4 +31,3 @@
   
 >>Known Bugs
   - game can't be paused (camera rotation can be)
-  - 
