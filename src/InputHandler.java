@@ -32,10 +32,6 @@ public class InputHandler implements EventHandler
   private String currentSet = "";
   private String selectedSet = "";
   private int inputAliveCells;
-  private int r1 = 3;
-  private int r2 = 6;
-  private int r3 = 6;
-  private int r4 = 3;
   double mousePosX;
   double mousePosY;
   double mouseOldX;
@@ -100,7 +96,6 @@ public class InputHandler implements EventHandler
         startButton.setText("Pause");
         if (!currentSet.equals(selectedSet)) //want to switch to different cell set
         {
-          game.setRs(r1, r2, r3, r4); //will set Rs to default if not chosen
           currentSet = selectedSet;
 
           game.startGame();
@@ -172,10 +167,10 @@ public class InputHandler implements EventHandler
           break;
       }
     }
-    else if (source == r1DropDown) game.setR1(r1 = Integer.parseInt(r1DropDown.getValue().toString()));
-    else if (source == r2DropDown) game.setR2(r2 = Integer.parseInt(r2DropDown.getValue().toString()));
-    else if (source == r3DropDown) game.setR3(r3 = Integer.parseInt(r3DropDown.getValue().toString()));
-    else if (source == r4DropDown) game.setR4(r4 = Integer.parseInt(r4DropDown.getValue().toString()));
+    else if (source == r1DropDown) game.setR1(Integer.parseInt(r1DropDown.getValue().toString()));
+    else if (source == r2DropDown) game.setR2(Integer.parseInt(r2DropDown.getValue().toString()));
+    else if (source == r3DropDown) game.setR3(Integer.parseInt(r3DropDown.getValue().toString()));
+    else if (source == r4DropDown) game.setR4(Integer.parseInt(r4DropDown.getValue().toString()));
   }
 
   private void handleKeyEvent(KeyEvent event)

@@ -1,5 +1,3 @@
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
-import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -197,7 +195,6 @@ public class TheGameOfLife extends Application
     int zLim = 31;
     int xLim = 0;
     isMegaCellClear = false;
-    setRPreset();
 
     for (int y = 30; y > 0; y--)
     {
@@ -243,6 +240,7 @@ public class TheGameOfLife extends Application
    */
   void createPreset3()
   {
+    setRs(6, 6, 6, 6);
     addNewCell(14, 14, 14);
     addNewCell(15, 14, 14);
     addNewCell(14, 15, 14);
@@ -253,11 +251,7 @@ public class TheGameOfLife extends Application
 
   void createPreset4()
   {
-    r1 = 1;
-    r2 = 3;
-    r3 = 1;
-    r4 = 4;
-    setRPreset();
+    setRs(3, 4, 2, 4);
     addNewCell(15, 15, 14);
     addNewCell(15, 15, 15);
     addNewCell(15, 15, 16);
@@ -289,6 +283,7 @@ public class TheGameOfLife extends Application
     this.r2 = r2;
     this.r3 = r3;
     this.r4 = r4;
+    displayRs();
   }
 
   /**
@@ -487,7 +482,7 @@ public class TheGameOfLife extends Application
     handleZoom();
   }
 
-  private void setRPreset()
+  private void displayRs()
   {
     r1dropDown.setPromptText("r1 = " + r1);
     r2dropDown.setPromptText("r2 = " + r2);
