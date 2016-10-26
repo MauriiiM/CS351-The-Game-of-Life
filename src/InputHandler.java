@@ -94,16 +94,17 @@ public class InputHandler implements EventHandler
       if (startButton.getText().equals("Start"))
       {
         startButton.setText("Pause");
+        game.getTransition().play();
+
         if (!currentSet.equals(selectedSet)) //want to switch to different cell set
         {
           currentSet = selectedSet;
-
-          game.startGame();
         }
       }
       else
       {
         startButton.setText("Start");
+        game.getTransition().pause();
       }
     }
     else if (source == textField)

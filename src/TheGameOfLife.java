@@ -50,6 +50,7 @@ public class TheGameOfLife extends Application
 
   private Random random = new Random();
   private Timeline timeline;
+  private Transition transition;
 
   private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
   private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
@@ -119,6 +120,11 @@ public class TheGameOfLife extends Application
   Timeline getTimeline()
   {
     return timeline;
+  }
+
+  public Transition getTransition()
+  {
+    return transition;
   }
 
   void clearMegaCell()
@@ -287,33 +293,6 @@ public class TheGameOfLife extends Application
   }
 
   /**
-   * has the actual animation loop which will check neighbors of each cell and check whether it should live/die
-   */
-  void startGame()
-  {
-    Transition timer = new Transition()
-    {
-      {
-        setCycleDuration(Duration.INDEFINITE);
-      }
-
-      @Override
-      protected void interpolate(double frac)
-      {
-        if (frame == 60)
-        {
-          decideLife();
-
-        animateLife(frame);
-          frame = 0;
-        }
-        frame++;
-      }
-    };
-    timer.play();
-  }
-
-  /**
    * create a new cell in 3D coordinates from given position and will draw it
    *
    * @param x x-coordinate in 3D structure
@@ -415,6 +394,32 @@ public class TheGameOfLife extends Application
         }
       }
     }
+  }
+
+  /**
+   *
+   */
+  private void createTransition()
+  {
+    transition = new Transition()
+    {
+      {
+        setCycleDuration(Duration.INDEFINITE);
+      }
+
+      @Override
+      protected void interpolate(double frac)
+      {
+        if (frame == 60)
+        {
+          decideLife();
+
+          animateLife(frame);
+          frame = 0;
+        }
+        frame++;
+      }
+    };
   }
 
   /**
@@ -605,6 +610,7 @@ public class TheGameOfLife extends Application
     setupLayout();
     buildCamera();
     startAutoRotation(timeline);
+    createTransition();
 
     setEventHandler();
 
