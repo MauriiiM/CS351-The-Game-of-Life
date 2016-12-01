@@ -193,10 +193,69 @@ public class TheGameOfLife extends Application
     }
   }
 
+  void createPreset1()
+  {
+    setRs(4, 4, 3, 4);
+    addNewCell(14, 14, 14);
+    addNewCell(15, 14, 14);
+    addNewCell(14, 15, 14);
+    addNewCell(15, 15, 14);
+
+    addNewCell(14, 14, 16);
+    addNewCell(15, 14, 16);
+    addNewCell(14, 15, 16);
+    addNewCell(15, 15, 16);
+  }
+
+  void createPreset2()
+  {
+    setRs(4, 4, 4, 3);
+    addNewCell(14, 14, 14);
+    addNewCell(15, 14, 14);
+    addNewCell(14, 15, 14);
+    addNewCell(15, 15, 14);
+
+    addNewCell(14, 14, 16);
+    addNewCell(15, 14, 16);
+    addNewCell(14, 15, 16);
+    addNewCell(15, 15, 16);
+  }
+
+  void createPreset3()
+  {
+    setRs(4, 5, 3, 4);
+    addNewCell(14, 14, 14);
+    addNewCell(15, 14, 14);
+    addNewCell(14, 15, 14);
+    addNewCell(15, 15, 14);
+
+    addNewCell(14, 14, 16);
+    addNewCell(15, 14, 16);
+    addNewCell(14, 15, 16);
+    addNewCell(15, 15, 16);
+  }
+
+  void createPreset4()
+  {
+    setRs(6, 6, 7, 5);
+    addNewCell(14, 14, 16);
+    addNewCell(15, 14, 16);
+    addNewCell(14, 15, 16);
+    addNewCell(15, 15, 16);
+
+    addNewCell(14, 15, 15);
+    addNewCell(15, 15, 15);
+    addNewCell(14, 16, 15);
+    addNewCell(15, 16, 15);
+
+    addNewCell(14, 14, 14);
+    addNewCell(15, 14, 14);
+  }
+
   /**
    * will create a cell mega structure in a staircase shape
    */
-  void createPreset1()
+  void createPresetStaircase()
   {
     int zLim = 31;
     int xLim = 0;
@@ -220,7 +279,7 @@ public class TheGameOfLife extends Application
   /**
    * life structure outline
    */
-  void createPreset2()
+  void createPresetOutline()
   {
     for (int i = 1; i < 31; i++)
     {
@@ -239,28 +298,6 @@ public class TheGameOfLife extends Application
       addNewCell(30, 1, i);
       addNewCell(30, 30, i);
     }
-  }
-
-  /**
-   * small cube with missing corner
-   */
-  void createPreset3()
-  {
-    setRs(6, 6, 6, 6);
-    addNewCell(14, 14, 14);
-    addNewCell(15, 14, 14);
-    addNewCell(14, 15, 14);
-    addNewCell(14, 14, 15);
-    addNewCell(15, 14, 15);
-    addNewCell(14, 15, 15);
-  }
-
-  void createPreset4()
-  {
-    setRs(3, 4, 2, 4);
-    addNewCell(15, 15, 14);
-    addNewCell(15, 15, 15);
-    addNewCell(15, 15, 16);
   }
 
   void setR1(int r1)
@@ -322,23 +359,15 @@ public class TheGameOfLife extends Application
           //case to see if it should be a new cell
           if (shoudBeAlive[x][y][z] && !cell[x][y][z].isAlive())
           {
-//            ScaleTransition st = new ScaleTransition(Duration.millis(1000), cell[x][y][z]);
-//            st.setByX(1.5);
-//            st.setByY(1.5f);
-//            st.setByZ(1.5);
-//            st.setAutoReverse(true);
-//
-//            st.play();
+            System.out.println(frame);
             cell[x][y][z].setColor(true);
             cell[x][y][z].setBoxSize(4 * frame / 59);
             if (cell[x][y][z].getBoxSize() == 4) cell[x][y][z].setAlive();
-
           }
           else if (!shoudBeAlive[x][y][z] && cell[x][y][z].isAlive())
           {
             cell[x][y][z].setColor(false);
             cell[x][y][z].setBoxSize(4 - (4 * frame / 59));
-
             if (cell[x][y][z].getBoxSize() == 0) cell[x][y][z].setDead();
           }
         }
@@ -413,10 +442,9 @@ public class TheGameOfLife extends Application
         if (frame == 60)
         {
           decideLife();
-
-          animateLife(frame);
           frame = 0;
         }
+        animateLife(frame);
         frame++;
       }
     };
@@ -498,21 +526,22 @@ public class TheGameOfLife extends Application
   /**
    * sets up stage GUI (i.e. UI on top, and 3D model under it)
    */
-  private void setupLayout()
+  private void setupGUI()
   {
     //ComboBoxes
-    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2", "Preset 3", "Preset 4");
+    ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2",
+            "Preset 3", "Preset 4", "Staircase", "Outline");
     ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     dropDown = new ComboBox<>(dropDownList);
     dropDown.setPromptText("Cell Structure");
     r1dropDown = new ComboBox<>(rNeighbor);
-    r1dropDown.setPromptText("r1=" + r1);
+    r1dropDown.setPromptText("r1");
     r2dropDown = new ComboBox<>(rNeighbor);
-    r2dropDown.setPromptText("r2=" + r2);
+    r2dropDown.setPromptText("r2");
     r3dropDown = new ComboBox<>(rNeighbor);
-    r3dropDown.setPromptText("r3=" + r3);
+    r3dropDown.setPromptText("r3");
     r4dropDown = new ComboBox<>(rNeighbor);
-    r4dropDown.setPromptText("r4=" + r4);
+    r4dropDown.setPromptText("r4");
 
     //textField
     textField = new TextField();
@@ -607,7 +636,7 @@ public class TheGameOfLife extends Application
 
     createLife();
 
-    setupLayout();
+    setupGUI();
     buildCamera();
     startAutoRotation(timeline);
     createTransition();

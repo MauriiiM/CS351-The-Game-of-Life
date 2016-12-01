@@ -19,7 +19,6 @@ class Cell extends Box
     setDead();
   }
 
-
   float getBoxSize()
   {
     return boxSize;
@@ -28,6 +27,9 @@ class Cell extends Box
   void setBoxSize(float boxSize)
   {
     this.boxSize = boxSize;
+    this.setHeight(boxSize);
+    this.setWidth(boxSize);
+    this.setWidth(boxSize);
   }
 
   void setX(int x)
@@ -64,9 +66,6 @@ class Cell extends Box
     color.setSpecularColor(Color.CADETBLUE);
   }
 
-  /**
-   *
-   */
   void setDead()
   {
     isAlive = false;

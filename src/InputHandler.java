@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
  *
  * @author Mauricio Monsivais
  */
-public class InputHandler implements EventHandler
+class InputHandler implements EventHandler
 {
   private TheGameOfLife game;
   private SubScene subscene;
@@ -32,12 +32,8 @@ public class InputHandler implements EventHandler
   private String currentSet = "";
   private String selectedSet = "";
   private int inputAliveCells;
-  double mousePosX;
-  double mousePosY;
   double mouseOldX;
   double mouseOldY;
-  double mouseDeltaX;
-  double mouseDeltaY;
 
   InputHandler(TheGameOfLife game)
   {
@@ -122,8 +118,9 @@ public class InputHandler implements EventHandler
     }
     else if (source == dropDown)
     {
+      if(game.getTransition() != null) game.getTransition().pause();
       selectedSet = dropDown.getValue().toString();
-      if (!currentSet.equals(dropDown)) startButton.setText("Start");
+      if (!currentSet.equals(dropDown.getId())) startButton.setText("Start");
       if (selectedSet.equals("n Cells Alive"))
       {
         startButton.setDisable(true);
@@ -166,6 +163,18 @@ public class InputHandler implements EventHandler
           System.out.println("creating preset 4");
           game.createPreset4();
           break;
+        case "Staircase":
+        System.out.println("Clearing Cell Structure");
+        game.clearMegaCell();
+        System.out.println("creating staircase");
+        game.createPresetStaircase();
+        break;
+        case "Outline":
+        System.out.println("Clearing Cell Structure");
+        game.clearMegaCell();
+        System.out.println("creating outline");
+        game.createPresetOutline();
+        break;
       }
     }
     else if (source == r1DropDown) game.setR1(Integer.parseInt(r1DropDown.getValue().toString()));
