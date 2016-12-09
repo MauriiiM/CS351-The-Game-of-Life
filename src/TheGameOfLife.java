@@ -55,6 +55,7 @@ public class TheGameOfLife extends Application
   private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
   private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
   private double camDistance = -220;
+  private double camHeight = -140;
 
   private Cell[][][] cell = new Cell[32][32][32];
   private boolean[][][] shoudBeAlive = new boolean[32][32][32];
@@ -197,42 +198,42 @@ public class TheGameOfLife extends Application
   {
     setRs(4, 4, 3, 4);
     addNewCell(14, 14, 14);
-    addNewCell(15, 14, 14);
     addNewCell(14, 15, 14);
-    addNewCell(15, 15, 14);
+    addNewCell(14, 14, 15);
+    addNewCell(14, 15, 15);
 
-    addNewCell(14, 14, 16);
-    addNewCell(15, 14, 16);
-    addNewCell(14, 15, 16);
-    addNewCell(15, 15, 16);
+    addNewCell(16, 14, 14);
+    addNewCell(16, 15, 14);
+    addNewCell(16, 14, 15);
+    addNewCell(16, 15, 15);
   }
 
   void createPreset2()
   {
     setRs(4, 4, 4, 3);
     addNewCell(14, 14, 14);
-    addNewCell(15, 14, 14);
     addNewCell(14, 15, 14);
-    addNewCell(15, 15, 14);
+    addNewCell(14, 14, 15);
+    addNewCell(14, 15, 15);
 
-    addNewCell(14, 14, 16);
-    addNewCell(15, 14, 16);
-    addNewCell(14, 15, 16);
-    addNewCell(15, 15, 16);
+    addNewCell(16, 14, 14);
+    addNewCell(16, 15, 14);
+    addNewCell(16, 14, 15);
+    addNewCell(16, 15, 15);
   }
 
   void createPreset3()
   {
     setRs(4, 5, 3, 4);
     addNewCell(14, 14, 14);
-    addNewCell(15, 14, 14);
     addNewCell(14, 15, 14);
-    addNewCell(15, 15, 14);
+    addNewCell(14, 14, 15);
+    addNewCell(14, 15, 15);
 
-    addNewCell(14, 14, 16);
-    addNewCell(15, 14, 16);
-    addNewCell(14, 15, 16);
-    addNewCell(15, 15, 16);
+    addNewCell(16, 14, 14);
+    addNewCell(16, 15, 14);
+    addNewCell(16, 14, 15);
+    addNewCell(16, 15, 15);
   }
 
   void createPreset4()
@@ -397,8 +398,17 @@ public class TheGameOfLife extends Application
   {
     scene.setOnScroll(event ->
     {
-      if (event.getDeltaY() < 0) camDistance *= 1.01;
-      else camDistance *= .99;
+      if (event.getDeltaY() < 0)
+      {
+        camDistance *= 1.03;
+        camHeight *= 1.03;
+      }
+      else
+      {
+        camDistance *= .97;
+        camHeight *= .97;
+      }
+      camera.setTranslateY(camHeight);
       camera.setTranslateZ(camDistance);
     });
   }
