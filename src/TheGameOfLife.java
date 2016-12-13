@@ -52,8 +52,8 @@ public class TheGameOfLife extends Application
   private Timeline timeline;
   private Transition transition;
 
-  private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
-  private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
+//  private static final Stop WHITE_END = new Stop(.6, Color.BLACK);
+//  private static final Stop AQUA = new Stop(0, Color.BLUEVIOLET);
   private double camDistance = -220;
   private double camHeight = -140;
 
@@ -360,14 +360,13 @@ public class TheGameOfLife extends Application
           //case to see if it should be a new cell
           if (shoudBeAlive[x][y][z] && !cell[x][y][z].isAlive())
           {
-            System.out.println(frame);
-            cell[x][y][z].setColor(true);
+            cell[x][y][z].setColor(true, frame);
             cell[x][y][z].setBoxSize(4 * frame / 59);
             if (cell[x][y][z].getBoxSize() == 4) cell[x][y][z].setAlive();
           }
           else if (!shoudBeAlive[x][y][z] && cell[x][y][z].isAlive())
           {
-            cell[x][y][z].setColor(false);
+            cell[x][y][z].setColor(false, frame);
             cell[x][y][z].setBoxSize(4 - (4 * frame / 59));
             if (cell[x][y][z].getBoxSize() == 0) cell[x][y][z].setDead();
           }
@@ -400,13 +399,13 @@ public class TheGameOfLife extends Application
     {
       if (event.getDeltaY() < 0)
       {
-        camDistance *= 1.03;
-        camHeight *= 1.03;
+        camDistance *= 1.05;
+        camHeight *= 1.05;
       }
       else
       {
-        camDistance *= .97;
-        camHeight *= .97;
+        camDistance *= .95;
+        camHeight *= .95;
       }
       camera.setTranslateY(camHeight);
       camera.setTranslateZ(camDistance);
@@ -541,7 +540,8 @@ public class TheGameOfLife extends Application
     //ComboBoxes
     ObservableList<String> dropDownList = FXCollections.observableArrayList("n Cells Alive", "Random Cells", "Preset 1", "Preset 2",
             "Preset 3", "Preset 4", "Staircase", "Outline");
-    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
+    ObservableList<Integer> rNeighbor = FXCollections.observableArrayList(
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
     dropDown = new ComboBox<>(dropDownList);
     dropDown.setPromptText("Cell Structure");
     r1dropDown = new ComboBox<>(rNeighbor);
@@ -568,7 +568,7 @@ public class TheGameOfLife extends Application
         }
       }
     });
-    textField.setPromptText("alive cells [1-10k]");
+    textField.setPromptText("n alive cells");
 
     //buttons
     buttonLayout = new HBox();
@@ -581,10 +581,10 @@ public class TheGameOfLife extends Application
 
     //scene setup
     BorderPane borderPane = new BorderPane();
-    LinearGradient bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
+//    LinearGradient bg = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, AQUA, WHITE_END);
     scene = new Scene(borderPane, 1080, 742);
     subscene = new SubScene(root, 1080, 700, true, SceneAntialiasing.DISABLED);
-    subscene.setFill(Color.DARKVIOLET);
+    subscene.setFill(Color.BLACK);
 
     //hbox setup
     buttonLayout.setPadding(new Insets(8, 12, 8, 12));
@@ -605,12 +605,17 @@ public class TheGameOfLife extends Application
    */
   private void startAutoRotation(Timeline timeline)
   {
-    Rotate rotate = new Rotate(0, 0, 0);
+    Rotate rotateY = new Rotate(0, 0, 0);
+    Rotate rotateX = new Rotate(0, 0, 0);
 
-    cameraGroup.getTransforms().add(rotate);
-    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotate.angleProperty(), 360)));
+    cameraGroup.getTransforms().add(rotateY);
+    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotateY.angleProperty(), 360)));
     timeline.setCycleCount(Animation.INDEFINITE);
-    rotate.setAxis(Rotate.Y_AXIS);
+    rotateY.setAxis(Rotate.Y_AXIS);
+    cameraGroup.getTransforms().add(rotateX);
+    timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(14), new KeyValue(rotateX.angleProperty(), 360)));
+    timeline.setCycleCount(Animation.INDEFINITE);
+    rotateY.setAxis(Rotate.X_AXIS);
   }
 
   private void transferLife()

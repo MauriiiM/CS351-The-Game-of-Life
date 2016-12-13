@@ -81,17 +81,20 @@ class Cell extends Box
    * Used to set color while dying or being born
    * @param isAlive true if being born (blue), false if dying (red)
    */
-  void setColor(boolean isAlive)
+  void setColor(boolean isAlive, int frame)
   {
     if (isAlive)
     {
-      color.setDiffuseColor(Color.DEEPSKYBLUE);
+//      color.setDiffuseColor(Color.rgb(0, 66, frame*3));
+      color.setDiffuseColor(Color.CORNFLOWERBLUE);
       color.setSpecularColor(Color.CADETBLUE);
     }
     else
     {
+      this.
+//      color.setDiffuseColor(Color.rgb((59-frame)*3, 24, 24));
       color.setDiffuseColor(Color.FIREBRICK);
-      color.setSpecularColor(Color.CHOCOLATE);
+      color.setSpecularColor(Color.SADDLEBROWN);
     }
     this.setMaterial(color);
   }
